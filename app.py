@@ -4,6 +4,7 @@ import tornado.web
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
+    "debug": True,
 }
 
 class MainHandler(tornado.web.RequestHandler):
