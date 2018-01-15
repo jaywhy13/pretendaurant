@@ -38,10 +38,24 @@ Vue.component('staff-member', {
 var app = new Vue({
     el: '#app',
     data: {
-        workers: [],
-        customers: [],
+        // Staff
+        workingStaff: [],
+        availableStaff: [],
+
+        // Customers
+        customerQueue: [],
+        dissatisfiedCustomers: [],
+
+        // Management
         interviewees: [],
         rejectedInterviewees: [],
+
+        // Rates and metrics
+        periodLengthMs: 3000,
+        maxNewCustomersPerPeriod: 3,
+        timeToServe: 3,
+
+    },
     },
     methods: {
 
