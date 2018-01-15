@@ -56,6 +56,9 @@ var app = new Vue({
         timeToServe: 3,
 
     },
+    mounted: function(){
+        this.setup();
+    },
     },
     methods: {
 
