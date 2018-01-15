@@ -61,6 +61,10 @@ var app = new Vue({
     },
     },
     methods: {
+        setup: function(){
+            this.addStartingStaff();
+            setInterval(this.addCustomers, this.periodLengthMs);
+        },
 
     }
 });
