@@ -66,5 +66,74 @@ var app = new Vue({
             setInterval(this.addCustomers, this.periodLengthMs);
         },
 
+        addCustomerToQueue: function(){
+            var randomNum = getRandomInt(27);
+            var customer = {
+                'url': '/static/img/' + randomNum + '.svg',
+            };
+            // console.log("Adding customer", customer);
+            this.customerQueue.push(customer);
+        },
+
+        addCustomers: function(){
+            var numCustomers = getRandomInt(this.maxNewCustomersPerPeriod);
+            for(var i = 0; i < numCustomers; i++){
+                this.addCustomerToQueue();
+            }
+        },
+
+        addStartingStaff: function(){
+            var numStaff = getRandomInt(3);
+            console.log("Adding", numStaff, "starting staff");
+            for(var i = 0; i < numStaff; i++){
+                this.addStaff();
+            }
+
+            var workingStaff = getRandomInt(numStaff);
+            for(var i = 0; i < numStaff; i++){
+                this.addWorkingStaff();
+            }
+        },
+
+        addStaff: function(){
+            this.availableStaff.push({
+                'url': '/static/img/staff' + getRandomInt(9) + '.svg',
+                'customer': null,
+            });
+        },
+
+
+        addWorkingStaff: function(){
+            if(this.availableStaff.length > 0){
+                var staff = this.availableStaff.shift();
+                this.workingStaff.push(staff);
+            }
+        },
+
+        serveCustomer: function(){
+            if(this.customerQueue.length > 0){
+                console.log("Going to try and serve a customer, we have", this.customerQueue.length, "waiting customers and", this.workingStaff.length, "working staff");
+                for(var i = 0; i < this.workingStaff.length; i++){
+                    var staff = this.workingStaff[i];
+                    if(staff.customer == null){
+                        var customer = this.customerQueue.shift();
+                        console.log("Assigning", customer, "to", staff);
+                        staff.customer = customer;
+                        setTimeout(function(){
+                            staff.customer = null;
+                            app.$emit("customer-served");
+                        }, app.timeToServe * app.periodLengthMs);
+                        break;
+                    } else {
+                    }
+                }
+            }
+        },
+    },
+    watch: {
+        customerQueue: function(){
+            this.serveCustomer();
+        }
     }
 });
+
