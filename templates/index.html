@@ -11,9 +11,24 @@
             </div>
 
             <div class="body">
-                <div class="workers"></div>
 
-                <div class="customers"></div>
+                <div class="working-staff">
+                    Cashiers
+                    <div class="working-staff-member" v-for="staff in workingStaff">
+                        <staff-member v-bind:staff="staff"></staff-member>
+                    </div>
+                </div>
+
+                <div class="available-staff">
+                    Aavilable
+                    <div class="available-staff-member" v-for="staff in availableStaff">
+                        <staff-member v-bind:staff="staff"></staff-member>
+                    </div>
+                </div>
+
+                <div class="customer-queue">
+                    <customer v-for="customer in customerQueue" v-bind:customer="customer"></customer>
+                </div>
 
                 <div class="managers-office">
 
