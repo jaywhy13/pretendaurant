@@ -1,0 +1,26 @@
+http {
+    server {
+        listen 80;
+
+        location = /favicon.ico { 
+            access_log off;
+            log_not_found off; 
+        }
+
+        location /static/js/ {
+            root /code/static/;
+        }
+
+        location /media/ {
+            root /code;
+        }
+
+        location / {
+            proxy_pass http://web:3001;
+        }
+    }        
+}
+
+events {
+    
+}
