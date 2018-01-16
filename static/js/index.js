@@ -94,6 +94,8 @@ Vue.component('staff-member', {
 var app = new Vue({
     el: '#app',
     data: {
+        created: new Date().getTime(),
+
         // Staff
         cashiers: [],
         staff: [],
