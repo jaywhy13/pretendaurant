@@ -155,9 +155,14 @@ var app = new Vue({
             return this.totalCustomers > 0 ? parseInt(this.totalCustomerWaitTimeInMinutes / this.totalCustomers) : 0;
         }
     },
+
     mounted: function(){
         this.setup();
     },
+    events: {
+        customerServed: function(){
+            console.log("A customer was just served");
+        },
     },
     methods: {
         setup: function(){
@@ -246,6 +251,7 @@ var app = new Vue({
             for(var i = 0; i < numStaff; i++){
                 this.addStaff();
             }
+        },
 
         /**
          * Randomly pick a number of staff to start working as cashiers
@@ -338,6 +344,8 @@ var app = new Vue({
         },
 
     },
+
+
     watch: {
         customerQueue: function(){
             this.serveCustomer();
