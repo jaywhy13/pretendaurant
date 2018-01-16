@@ -20,6 +20,59 @@ Vue.component('customer', {
     }
 });
 
+Vue.component('cashier', {
+    props: ['staff'],
+    template: `
+            <div class="cashier">
+                <img v-bind:src="staff.url" width="128px"/>
+                <div class='staff-statistics'>
+                    <div class="staff-statistic accuracy">
+                        <span>Accuracy</span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar"
+                                v-bind:aria-valuenow="staff.accuracy"
+                                v-bind:aria-valuemin="0"
+                                v-bind:aria-valuemax="10"
+                                v-bind:style="{width: (10 * staff.accuracy) + '%'}"
+                                >
+                            </div>
+                        </div>
+                    </div>        
+
+                    <div class="staff-statistic speed">
+                        <span>Speed</span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar"
+                                v-bind:aria-valuenow="staff.speed"
+                                v-bind:aria-valuemin="0"
+                                v-bind:aria-valuemax="10"
+                                v-bind:style="{width: (10 * staff.speed) + '%'}"
+                                >
+                            </div>
+                        </div>
+                    </div>        
+
+                    <div class="staff-statistic staff-orders">
+                        <span>Orders Served: </span>
+                        <span v-text="staff.ordersServed">None</span>
+                    </div>        
+
+
+                </div>
+                <div v-if="staff.customer">
+                    <transition name="fade" enter-active-class="animated pulse" leave-active-class="animated fadeOutRight">
+                        <img v-bind:src="staff.customer.url" width="56px" />
+                    </transition>
+                </div>
+            </div>
+    `,
+    data: function(){
+        return {
+            'customer': null,
+        }
+    }
+});
+
 Vue.component('staff-member', {
     props: ['staff'],
     template: '\
