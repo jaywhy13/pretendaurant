@@ -168,10 +168,34 @@ var app = new Vue({
         addCustomerToQueue: function(){
             var randomNum = getRandomInt(27);
             var customer = {
+                'id': 'cust' + randomNum + '-' + new Date().getTime() + '-' + getRandomIntBetween(1, 1000),
                 'url': '/static/img/' + randomNum + '.svg',
+                'numOrders': getRandomIntBetween(this.minOrders, this.maxOrders),
+                'orderCost': getRandomIntBetween(this.minOrderCost, this.maxOrderCost),
+                'created': new Date().getTime(),
+                'served': false,
+                'staff': null,
+                'patienceInSeconds': getRandomIntBetween(1, this.minutesBeforeCustomerUpset),
+                'impatient': false,
+                'timeServed': null,
+                'minutesBeforeServed': 0,
             };
             // console.log("Adding customer", customer);
             this.customerQueue.push(customer);
+            setTimeout(function(){
+                var secondsWaiting = (new Date().getTime() - customer.created) / this.oneMinuteInMilliSeconds;
+                if(!customer.served && !customer.staff){
+                    customer.impatient = true;
+                    setTimeout(function(){
+                        var index = app.customerQueue.indexOf(customer);
+                        if(index > -1){
+                            app.customerQueue.splice(index, 1);
+                            app.dissatisfiedCustomers.push(customer);
+                        }
+                    }, getRandomIntBetween(1, app.minutesBeforeCustomerLeaves - app.minutesBeforeCustomerUpset) * app.oneMinuteInMilliSeconds)
+                }
+
+            }, customer.patienceInSeconds * this.oneMinuteInMilliSeconds);
         },
 
         addCustomers: function(){
