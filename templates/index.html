@@ -25,10 +25,20 @@
                         </button>
                         <a class="navbar-brand" href="#">Pretendaraunt</a>
 
-                <div class="working-staff">
-                    Cashiers
-                    <div class="working-staff-member" v-for="staff in workingStaff">
-                        <staff-member v-bind:staff="staff"></staff-member>
+                    </div>
+                </div>
+            </nav>
+
+            <div>
+
+                <div class="container-fluid wrapper cashiers">
+                    <div class="row title">
+                        Cashiers
+                    </div>
+                    <div class="row">
+                        <div v-for="cashier in cashiers">
+                            <cashier v-bind:staff="cashier"></cashier>
+                        </div>
                     </div>
                 </div>
 

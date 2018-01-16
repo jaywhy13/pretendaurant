@@ -19,3 +19,11 @@ body {
     float: right;
 }
 
+.cashiers {
+    background-color: #f7f7f7;    
+}
+
+.cashier {
+    margin-right: 30px;
+    float: left;
+}
