@@ -48,9 +48,21 @@
                         <staff-member v-bind:staff="staff"></staff-member>
                     </div>
                 </div>
+                <div class="container-fluid wrapper customers">
+                    <div class="row title">
+                        Customers                                        
+                    </div>
 
-                <div class="customer-queue">
-                    <customer v-for="customer in customerQueue" v-bind:customer="customer"></customer>
+                    <div class="row">
+                        <div class="customer-queue">
+                            <transition-group name="customer-queue-transition-group" 
+                                    enter-active-class="animated fadeInRight"
+                                    leave-active-class="animated fadeOut"
+                                    >
+                                <customer v-for="customer in customerQueue" v-bind:customer="customer" v-bind:key="customer.id"></customer>
+                            </transition-group>
+                        </div>                    
+                    </div>
                 </div>
 
                 <div class="managers-office">
