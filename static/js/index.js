@@ -103,6 +103,7 @@ var app = new Vue({
         // Customers
         customerQueue: [],
         dissatisfiedCustomers: [],
+        servedCustomers: [],
 
         // Management
         interviewees: [],
@@ -111,7 +112,7 @@ var app = new Vue({
         expenses: 0,
 
         // Rates and metrics
-        periodLengthMs: 3000,
+        oneMinuteInMilliSeconds: 3000,
         maxNewCustomersPerPeriod: 3,
         timeToServe: 3,
 
