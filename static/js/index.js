@@ -129,6 +129,31 @@ var app = new Vue({
         minutesBeforeCustomerLeaves: 20,
         minutesElapsed: 0,
     },
+
+    computed: {
+        hoursElapsed: function(){
+            return parseInt(this.minutesElapsed / 60);
+        },
+
+        currentTime: function(){
+            var hours = parseInt(this.hoursElapsed % 12);
+            var minutes = (this.minutesElapsed - (this.hoursElapsed * 60));
+            if(hours < 10){
+                hours = "0" + hours;
+            }
+            if(minutes < 10){
+                minutes = "0" + minutes;
+            }
+            return hours + ":" + minutes;
+        },
+
+        totalCustomers: function(){
+            return this.servedCustomers.length + this.dissatisfiedCustomers.length + this.customerQueue.length;
+        },
+
+        averageWaitTimeInMinutes: function(){
+            return this.totalCustomers > 0 ? parseInt(this.totalCustomerWaitTimeInMinutes / this.totalCustomers) : 0;
+        }
     },
     mounted: function(){
         this.setup();
