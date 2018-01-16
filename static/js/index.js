@@ -107,6 +107,8 @@ var app = new Vue({
         // Management
         interviewees: [],
         rejectedInterviewees: [],
+        income: 0,
+        expenses: 0,
 
         // Rates and metrics
         periodLengthMs: 3000,
