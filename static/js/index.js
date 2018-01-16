@@ -95,8 +95,8 @@ var app = new Vue({
     el: '#app',
     data: {
         // Staff
-        workingStaff: [],
-        availableStaff: [],
+        cashiers: [],
+        staff: [],
 
         // Customers
         customerQueue: [],
