@@ -251,9 +251,18 @@ var app = new Vue({
         },
 
         addStaff: function(){
-            this.availableStaff.push({
+            this.staff.push({
                 'url': '/static/img/staff' + getRandomInt(9) + '.svg',
                 'customer': null,
+                'ordersServed': 0,
+
+                // raw metrics
+                'speed': getRandomIntBetween(1, 10),
+                'accuracy': getRandomIntBetween(1, 10),
+                'hourlyRate': getRandomIntBetween(this.minHourlyRate, this.maxHourlyRate),
+
+                // generated metrics
+                'daysHired': 0,
             });
         },
 
