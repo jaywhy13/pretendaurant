@@ -237,6 +237,9 @@ var app = new Vue({
             }
         },
 
+        /**
+         * Adds some random staff to add to the restaraunt
+         */
         addStartingStaff: function(){
             var numStaff = getRandomInt(3);
             console.log("Adding", numStaff, "starting staff");
@@ -244,12 +247,20 @@ var app = new Vue({
                 this.addStaff();
             }
 
-            var workingStaff = getRandomInt(numStaff);
-            for(var i = 0; i < numStaff; i++){
-                this.addWorkingStaff();
+        /**
+         * Randomly pick a number of staff to start working as cashiers
+         */
+        addStartingCashiers: function(){
+            var numStaff = this.staff.length;
+            var numCashiers = getRandomInt(numStaff);
+            for(var i = 0; i < numCashiers; i++){
+                this.addCashiers();
             }
         },
 
+        /**
+         * Create random attributes for a staff member
+         */
         addStaff: function(){
             this.staff.push({
                 'url': '/static/img/staff' + getRandomInt(9) + '.svg',
@@ -267,10 +278,10 @@ var app = new Vue({
         },
 
 
-        addWorkingStaff: function(){
-            if(this.availableStaff.length > 0){
-                var staff = this.availableStaff.shift();
-                this.workingStaff.push(staff);
+        addCashiers: function(){
+            if(this.staff.length > 0){
+                var staff = this.staff.shift();
+                this.cashiers.push(staff);
             }
         },
 
