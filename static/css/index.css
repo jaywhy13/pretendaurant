@@ -6,3 +6,16 @@ body {
     padding: 30px;
     height: 370px;
 }
+
+.time {
+    width: 70px;
+    background-color: #288251;
+    height: 40px;
+    color: white;
+    font-size: 21px;
+    padding: 5px;
+    text-align: center;
+    margin-top: 5px;
+    float: right;
+}
+
