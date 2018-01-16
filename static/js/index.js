@@ -114,8 +114,21 @@ var app = new Vue({
         // Rates and metrics
         oneMinuteInMilliSeconds: 3000,
         maxNewCustomersPerPeriod: 3,
-        timeToServe: 3,
+        minimumTimePerOrder: 3,
+        maxHourlyRate: 50,
+        minHourlyRate: 8,
+        minOrders: 1,
+        maxOrders: 5,
+        minOrderCost: 1,
+        maxOrderCost: 15,
+        totalOrdersServed: 0,
+        totalCustomerWaitTimeInMinutes: 0,
 
+
+        minutesBeforeCustomerUpset: 10,
+        minutesBeforeCustomerLeaves: 20,
+        minutesElapsed: 0,
+    },
     },
     mounted: function(){
         this.setup();
