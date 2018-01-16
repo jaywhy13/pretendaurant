@@ -3,6 +3,11 @@ function getRandomInt(max){
     return randomNum;
 }
 
+function getRandomIntBetween(min, max){
+    var randomNum = min + getRandomInt(max);
+    return randomNum;
+}
+
 Vue.component('customer', {
     props: ['customer'],
     template: `
