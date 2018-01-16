@@ -65,7 +65,27 @@
                 </div>
 
                 <div class="statistics">
-                    
+                    <div class="statistic">
+                        <span class="title">Orders Served: </span>
+                        <span v-text="totalOrdersServed"></span>
+                    </div>
+
+
+                    <div class="statistic">
+                        <span class="title">Served Customers: </span>
+                        <span v-text="servedCustomers.length"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Dissatisfied Customers: </span>
+                        <span v-text="dissatisfiedCustomers.length"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Avgerage Wait Time: </span>
+                        <span v-text="averageWaitTimeInMinutes"></span>
+                    </div>
+
                 </div>
             </div>
         </div>
