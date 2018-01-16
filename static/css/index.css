@@ -46,3 +46,38 @@ body {
 .customer-queue-transition-group-leave-active {
     position: absolute;
 }
+
+.row.title {
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #c7c7c7;    
+}
+
+.staff-statistic span {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #b0b0b0;
+    font-weight: bold;
+}
+
+
+/**
+ * Bootstrap overrides
+ */
+
+.navbar {
+    border-radius: 0px;
+    background-color: #32905d;
+    border: none;
+    margin-bottom: 0px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: white;
+}
+
+.progress {
+    height: 8px;
+}
