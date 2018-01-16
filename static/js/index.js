@@ -162,7 +162,39 @@ var app = new Vue({
     methods: {
         setup: function(){
             this.addStartingStaff();
-            setInterval(this.addCustomers, this.periodLengthMs);
+            this.addStartingCashiers();
+            this.play();
+        },
+
+        /**
+         * Starts the simulation
+         * @return {[type]} [description]
+         */
+        play: function(){
+            this.newCustomerInterval = setInterval(this.addCustomers, this.oneMinuteInMilliSeconds);
+            this.clockInterval = setInterval(function(){
+                app.minutesElapsed++;
+            }, this.oneMinuteInMilliSeconds);
+        },
+
+        /**
+         * Pauses the simulation
+         * @return {[type]} [description]
+         */
+        stop: function(){
+            this.clearIntervals([
+                this.clockInterval,
+                this.newCustomerInterval,
+            ]);
+        },
+
+        clearIntervals: function(intervals){
+            for (var i = intervals.length - 1; i >= 0; i--) {
+                if(interval){
+                    var interval = intervals[i];
+                    clearInterval(interval);
+                }
+            }
         },
 
         addCustomerToQueue: function(){
