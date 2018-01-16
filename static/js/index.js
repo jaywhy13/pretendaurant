@@ -5,13 +5,11 @@ function getRandomInt(max){
 
 Vue.component('customer', {
     props: ['customer'],
-    template: '\
-            \
-            <div>\
-                Customer\
-                    <img v-bind:src="customer.url" width="64px"/>\
-            </div>\
-    ',
+    template: `
+        <div class="customer" v-bind:class="{impatient: customer.impatient }">
+                <img v-bind:src="customer.url" width="64px"/>
+        </div>
+    `,
     data: function(){
         return {}
     }
