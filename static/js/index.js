@@ -211,23 +211,56 @@ var app = new Vue({
 
         serveCustomer: function(){
             if(this.customerQueue.length > 0){
-                console.log("Going to try and serve a customer, we have", this.customerQueue.length, "waiting customers and", this.workingStaff.length, "working staff");
-                for(var i = 0; i < this.workingStaff.length; i++){
-                    var staff = this.workingStaff[i];
+                for(var i = 0; i < this.cashiers.length; i++){
+                    var staff = this.cashiers[i];
                     if(staff.customer == null){
                         var customer = this.customerQueue.shift();
-                        console.log("Assigning", customer, "to", staff);
+                        customer.staff = staff;
+                        customer.timeServed = new Date().getTime();
+                        customer.minutesBeforeServed = (customer.timeServed - customer.created) / this.oneMinuteInMilliSeconds;
+                        this.totalCustomerWaitTimeInMinutes += customer.minutesBeforeServed;
                         staff.customer = customer;
+                        var timeToServe = app.getTimeToServe(staff, customer.numOrders);
                         setTimeout(function(){
+                            app.servedCustomers.push(staff.customer);
+                            app.income += staff.customer.orderCost;
+                            staff.ordersServed += customer.numOrders;
+                            app.totalOrdersServed += staff.customer.numOrders;
+                            staff.customer.served = true;
                             staff.customer = null;
                             app.$emit("customer-served");
-                        }, app.timeToServe * app.periodLengthMs);
+                        }, timeToServe);
                         break;
                     } else {
                     }
                 }
             }
         },
+
+
+        /**
+         * Caclulates how long it will take a given staff member to serve
+         * an order. It takes into consideration their accuracy and speed
+         */
+        getTimeToServe: function(staff, numOrders){
+            var timeToServe = 0;
+            var ordersServed = staff.ordersServed;
+            for (var i = numOrders - 1; i >= 0; i--) {
+                var timeForOrder = this.minimumTimePerOrder;
+                // We're using a simple model here... 
+                // If the accuracy is 6 / 10, then the first 6 orders
+                // will be served flawlessly, then the next 4 inaccurately.
+                // It takes double time the cashier serves the order incorrectly
+                if(((ordersServed + i) % 10) > staff.accuracy){
+                    timeForOrder *= 3;
+                }
+                timeToServe += timeForOrder;
+            }
+            // Divide by their speed
+            timeToServe /= staff.speed;
+            return timeToServe * this.oneMinuteInMilliSeconds;
+        },
+
     },
     watch: {
         customerQueue: function(){
