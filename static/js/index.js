@@ -226,11 +226,12 @@ var app = new Vue({
 
         addCustomerToQueue: function(){
             var randomNum = getRandomInt(27);
+            var numOrders = getRandomIntBetween(this.minOrders, this.maxOrders);
             var customer = {
                 'id': 'cust' + randomNum + '-' + new Date().getTime() + '-' + getRandomIntBetween(1, 1000),
                 'url': '/static/img/' + randomNum + '.svg',
-                'numOrders': getRandomIntBetween(this.minOrders, this.maxOrders),
-                'orderCost': getRandomIntBetween(this.minOrderCost, this.maxOrderCost),
+                'numOrders': numOrders,
+                'orderCost': getRandomIntBetween(this.minOrderCost, this.maxOrderCost) * numOrders,
                 'created': new Date().getTime(),
                 'served': false,
                 'staff': null,
