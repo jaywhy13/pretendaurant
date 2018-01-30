@@ -153,7 +153,25 @@ var app = new Vue({
 
         averageWaitTimeInMinutes: function(){
             return this.totalCustomers > 0 ? parseInt(this.totalCustomerWaitTimeInMinutes / this.totalCustomers) : 0;
-        }
+        },
+
+        efficiency: function(){
+            return this.totalCustomers <= 0 ? 0 : parseInt((this.servedCustomers.length / this.totalCustomers) * 100);
+        },
+
+        expense: function(){
+            var totalWages = 0;
+            var minutes = this.minutesElapsed;
+            for (var i = this.cashiers.length - 1; i >= 0; i--) {
+                var cashier = this.cashiers[i];
+                totalWages += ((minutes / 60) * cashier.hourlyRate);
+            }
+            return totalWages;
+        },
+
+        profit: function(){
+            return this.income - this.expense;
+        },
     },
 
     mounted: function(){
