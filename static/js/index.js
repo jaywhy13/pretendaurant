@@ -91,6 +91,8 @@ Vue.component('staff-member', {
     }
 });
 
+var HOUR_ELAPSED = "hour-elapsed";
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -197,6 +199,9 @@ var app = new Vue({
             this.newCustomerInterval = setInterval(this.addCustomers, this.oneMinuteInMilliSeconds);
             this.clockInterval = setInterval(function(){
                 app.minutesElapsed++;
+                if(app.minutesElapsed % 60 == 0){
+                    app.$emit(HOUR_ELAPSED);
+                }
             }, this.oneMinuteInMilliSeconds);
         },
 
