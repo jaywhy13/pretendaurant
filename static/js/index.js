@@ -111,7 +111,6 @@ var app = new Vue({
         interviewees: [],
         rejectedInterviewees: [],
         income: 0,
-        expenses: 0,
 
         // Rates and metrics
         oneMinuteInMilliSeconds: 3000,
@@ -122,7 +121,7 @@ var app = new Vue({
         minOrders: 1,
         maxOrders: 5,
         minOrderCost: 1,
-        maxOrderCost: 15,
+        maxOrderCost: 4,
         totalOrdersServed: 0,
         totalCustomerWaitTimeInMinutes: 0,
 
