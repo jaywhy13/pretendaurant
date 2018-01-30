@@ -90,6 +90,11 @@
                     </div>
 
                     <div class="statistic">
+                        <span class="title">Total Customers: </span>
+                        <span v-text="totalCustomers"></span>
+                    </div>
+
+                    <div class="statistic">
                         <span class="title">Dissatisfied Customers: </span>
                         <span v-text="dissatisfiedCustomers.length"></span>
                     </div>
@@ -97,6 +102,26 @@
                     <div class="statistic">
                         <span class="title">Avgerage Wait Time: </span>
                         <span v-text="averageWaitTimeInMinutes"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Efficiency: </span>
+                        <span v-text="efficiency"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Income: </span>
+                        <span v-text="income"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Expense: </span>
+                        <span v-text="expense"></span>
+                    </div>
+
+                    <div class="statistic">
+                        <span class="title">Profit: </span>
+                        <span v-text="profit"></span>
                     </div>
 
                 </div>
