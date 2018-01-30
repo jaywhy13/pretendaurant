@@ -33,6 +33,7 @@ body {
     margin-right: 20px;
     border-bottom: 2px solid transparent;
     display: inline-block;
+    transition: all 1s;
 }
 
 .customer.impatient {
@@ -41,6 +42,7 @@ body {
 
 .customer-queue-transition-group-move {
     transition: transform 1s;
+    background-color: grey;
 }
 
 .customer-queue-transition-group-leave-active {
