@@ -1,13 +1,13 @@
-# Pretendaraunt
+# Pretendaurant
 
-A pretend-restaraunt that's on its way to using Reinforcement Learning to manage the staff of the restaraunt.
+A pretend-restaurant that's on its way to using Reinforcement Learning to manage the staff of the restaurant.
 
 ## Requirements
 
-- [x] The restaraunt should see a random set of customers coming in consistenly throughout the day.
+- [x] The restaurant should see a random set of customers coming in consistenly throughout the day.
 - [x] Customers should join the emptiest line.
 - [ ] Cashiers should serve customers. After customers are served they should leave
-- [ ] Customers should leave the restaraunt `patience` units of time after joining the line if they are not served.
+- [ ] Customers should leave the restaurant `patience` units of time after joining the line if they are not served.
 - [ ] The manager should make the following decisions:
     - [ ] Nothing
     - [ ] Change a cashier

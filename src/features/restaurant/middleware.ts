@@ -4,7 +4,7 @@ import store from "../../store";
 import { Customer, Line } from "../../types";
 import { timeElapsed } from "../clock/clockSlice";
 import { customersGenerated, linesGenerated } from "../engine/engineSlice";
-import { addCustomerToLine, customersAdded, linesAdded } from "./restarauntSlice";
+import { addCustomerToLine, customersAdded, linesAdded } from "./restaurantSlice";
 import { selectCustomersWaitingToJoinLine, selectEmptiestLine } from "./selectors";
 
 export const addCustomerToQueueMiddleware: Middleware = ({ getState }) => {

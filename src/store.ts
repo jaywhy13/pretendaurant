@@ -2,9 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Middleware } from 'redux'
 import clockReducer from './features/clock/clockSlice';
 import engineReducer from './features/engine/engineSlice';
-import restarauntReducer from './features/restaraunt/restarauntSlice';
+import restaurantReducer from './features/restaurant/restaurantSlice';
 import { customerGenerationMiddleware, lineGenerationMiddleware } from './features/engine/middleware';
-import { addCustomerToLineMiddleware, addCustomerToQueueMiddleware, lineSetupMiddleware } from './features/restaraunt/middleware';
+import { addCustomerToLineMiddleware, addCustomerToQueueMiddleware, lineSetupMiddleware } from './features/restaurant/middleware';
 
 
 const loggingMiddleware: Middleware = ({ getState }) => {
@@ -18,7 +18,7 @@ const store = configureStore({
     reducer: {
         engine: engineReducer,
         clock: clockReducer,
-        restaraunt: restarauntReducer
+        restaurant: restaurantReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(
         customerGenerationMiddleware,

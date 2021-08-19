@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Customer, Line } from "../../types";
 
-export interface RestarauntState {
+export interface restaurantState {
     customersWaitingToJoinLine: Customer[];
     lines: Line[];
 }
 
-const initialState: RestarauntState = {
+const initialState: restaurantState = {
     customersWaitingToJoinLine: [],
     lines: []
 };
@@ -16,18 +16,18 @@ export interface CustomerLineAssignment {
     line: Line;
 }
 
-const restarauntSlice = createSlice({
-    name: 'restaraunt',
+const restaurantSlice = createSlice({
+    name: 'restaurant',
     initialState,
     reducers: {
-        customersAdded: (state: RestarauntState, action: PayloadAction<Customer[]>) => {
+        customersAdded: (state: restaurantState, action: PayloadAction<Customer[]>) => {
             console.log("Adding customers to waiting list", action.payload);
             state.customersWaitingToJoinLine = state.customersWaitingToJoinLine.concat(action.payload);
         },
-        linesAdded: (state: RestarauntState, action: PayloadAction<Line[]>) => {
+        linesAdded: (state: restaurantState, action: PayloadAction<Line[]>) => {
             state.lines = action.payload;
         },
-        addCustomerToLine: (state: RestarauntState, action: PayloadAction<CustomerLineAssignment>) => {
+        addCustomerToLine: (state: restaurantState, action: PayloadAction<CustomerLineAssignment>) => {
             const { customer, line } = action.payload;
             console.log("Adding", customer.id, "to", line.id);
             // Remove the customer from the queue
@@ -43,7 +43,7 @@ const restarauntSlice = createSlice({
     }
 })
 
-export const { customersAdded, linesAdded, addCustomerToLine } = restarauntSlice.actions;
+export const { customersAdded, linesAdded, addCustomerToLine } = restaurantSlice.actions;
 
 
-export default restarauntSlice.reducer;
+export default restaurantSlice.reducer;

@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import './App.css';
 import { Clock } from './components/Clock';
 import { CustomerInLine } from './components/CustomerInLine';
-import { selectCustomersWaitingToJoinLine, selectLines } from './features/restaraunt/selectors';
+import { selectCustomersWaitingToJoinLine, selectLines } from './features/restaurant/selectors';
 
 function App() {
   const lines = useSelector(selectLines);
