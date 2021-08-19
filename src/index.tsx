@@ -10,6 +10,10 @@ import { startClock } from './features/clock';
 
 // Start the clock
 startClock();
+
+// Start the engine
+// engine.start();
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
