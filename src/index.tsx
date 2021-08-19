@@ -5,7 +5,11 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux'
 import store from './store';
+import { startClock } from './features/clock';
 
+
+// Start the clock
+startClock();
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
