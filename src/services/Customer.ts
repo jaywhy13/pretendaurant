@@ -1,29 +1,43 @@
 import { Customer } from '../types';
-import { v4 as uuidv4 } from 'uuid';
+import { CustomerClient } from '../clients/Customer';
+import { RemoteCustomer } from '../clients/types';
 
-const CUSTOMER_DATA: Customer[] = [];
+type CustomerParameters = Omit<Partial<Customer>, "id">;
 
 
 class CustomerService {
-    public list(): Customer[] {
-        return CUSTOMER_DATA;
+    client: CustomerClient
+
+    public constructor(client: CustomerClient) {
+        this.client = client;
     }
+
+    public list(): Customer[] {
+        const remoteCustomers = this.client.list();
+        return remoteCustomers.map(remoteCustomer => this.toLocalCustomer(remoteCustomer));
+    }
+
 
     public create(patience: number): Customer {
-        const customer: Customer = {
-            id: uuidv4(),
-            patience,
-        }
-        CUSTOMER_DATA.push(customer);
-        return customer;
+        return this.toLocalCustomer(this.client.create(patience))
     }
 
-    public update(customer: Customer) {
-        const matchingCustomer = CUSTOMER_DATA.find((candidate) => candidate.id === customer.id);
-        if (matchingCustomer) {
-            matchingCustomer.patience = customer.patience;
+    public get(customerId: string): Customer | undefined {
+        const remoteCustomer = this.client.get(customerId);
+        return remoteCustomer ? this.toLocalCustomer(remoteCustomer) : undefined;
+    }
+
+    public update(id: string, parameters: CustomerParameters) {
+        this.client.update(id, parameters)
+    }
+
+    private toLocalCustomer(remoteCustomer: RemoteCustomer): Customer {
+        return {
+            id: remoteCustomer.id,
+            patience: remoteCustomer.patience,
         }
     }
+
 }
 
-export const customerService = new CustomerService();
+export const customerService = new CustomerService(new CustomerClient());
