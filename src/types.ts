@@ -10,6 +10,7 @@ export interface Customer {
 
 export interface Line {
     id: string;
-    cashier?: Cashier;
-    customers: Customer[];
+    cashierId?: string;
+    customerIds: string[];
 }
+
