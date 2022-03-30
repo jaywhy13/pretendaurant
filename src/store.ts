@@ -26,6 +26,8 @@ const store = configureStore({
         addCustomerToQueueMiddleware,
         lineSetupMiddleware,
         addCustomerToLineMiddleware,
+        serveCustomerMiddleware,
+        angryCustomerMiddleware,
         loggingMiddleware
     )
 });

@@ -1,15 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Customer, Line } from "../../types";
+import { act } from "react-dom/test-utils";
+import { Cashier, Customer, Fulfillment, Line } from "../../types";
+
+export interface CustomerLineAssignment {
+    customerId: string;
+    lineId: string;
+}
 
 
 interface EngineState {
     customersGenerated: Customer[];
     linesGenerated: Line[];
+    cashiersGenerated: Cashier[];
+    customerLineAssignment?: CustomerLineAssignment;
+    customerServed?: Fulfillment;
 }
 
 const initialState: EngineState = {
     customersGenerated: [],
-    linesGenerated: []
+    linesGenerated: [],
+    cashiersGenerated: [],
+    customerLineAssignment: undefined,
+    customerServed: undefined,
 }
 
 const engineSlice = createSlice({
@@ -21,11 +33,20 @@ const engineSlice = createSlice({
         },
         linesGenerated: (state, action: PayloadAction<Line[]>) => {
             state.linesGenerated = action.payload;
+        },
+        cashiersGenerated: (state, action: PayloadAction<Cashier[]>) => {
+            state.cashiersGenerated = action.payload;
+        },
+        customerAddedToLine: (state, action: PayloadAction<CustomerLineAssignment>) => {
+            state.customerLineAssignment = action.payload;
+        },
+        customerServed: (state, action: PayloadAction<Fulfillment>) => {
+            state.customerServed = action.payload;
         }
     }
 });
 
-export const { customersGenerated, linesGenerated } = engineSlice.actions;
+export const { customersGenerated, linesGenerated, cashiersGenerated, customerAddedToLine, customerServed } = engineSlice.actions;
 
 
 export default engineSlice.reducer;

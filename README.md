@@ -8,8 +8,8 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 
 - [x] The restaurant should see a random set of customers coming in consistenly throughout the day.
 - [x] Customers should join the emptiest line.
-- [ ] Cashiers should serve customers at the front of the line. After customers are served they should leave. Cashiers can serve `speed` number of customers for each unit of time.
-- [ ] Customers should leave the restaurant `patience` units of time after joining the line if they are not served.
+- [x] Cashiers should serve customers at the front of the line. After customers are served they should leave. Cashiers can serve `speed` number of customers for each unit of time.
+- [x] Customers should leave the restaurant `patience` units of time after joining the line if they are not served.
 - [ ] The manager should make the following decisions using a random selection algorithm:
     - [ ] Nothing
     - [ ] Change a cashier
