@@ -15,6 +15,15 @@ class Engine {
         return lines;
     }
 
+    public generateCashiers(): Cashier[] {
+        const NUMBER_OF_CASHIERS = 4;
+        const cashiers: Cashier[] = [];
+        for (let i = 0; i < NUMBER_OF_CASHIERS; i++) {
+            let speed = 1 + parseInt((Math.random() * 10).toString())
+            cashiers.push(cashierService.create(speed));
+        }
+        return cashiers;
+    }
     public generateCustomers(): Customer[] {
         const customers: Customer[] = [];
         const NUMBER_OF_CUSTOMERS = 1 + parseInt((Math.random() * 20).toString());
