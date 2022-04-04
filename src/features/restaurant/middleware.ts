@@ -5,13 +5,15 @@ import { Line } from "../../types";
 import { cashiersGenerated, customerAddedToLine, customerServed, customersGenerated, linesGenerated } from "../engine/engineSlice";
 import { linesUpdated } from "./restaurantSlice";
 
-export const lineSetupMiddleware: Middleware = ({ getState }) => {
+export const linesUpdatedMiddleware: Middleware = ({ getState }) => {
     return next => (action: PayloadAction<Line[]>) => {
-        if (action.type === linesGenerated.type) {
-            store.dispatch(linesAdded(action.payload))
+        if ([customersGenerated.type, linesGenerated.type, cashiersGenerated.type, customerAddedToLine.type, customerServed.type].includes(action.type)) {
+            const lines = lineService.list()
+            store.dispatch(linesUpdated(lines));
         }
         return next(action);
     }
 }
+
 
 
