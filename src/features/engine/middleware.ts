@@ -1,9 +1,15 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Middleware } from "@reduxjs/toolkit";
+import { cashierService } from "../../services/Cashier";
+import { clockService } from "../../services/Clock";
+import { customerService } from "../../services/Customer";
 import { engine } from "../../services/Engine";
+import { fulfilmentService } from "../../services/Fulfillment";
+import { lineService } from "../../services/Line";
+import { queueService } from "../../services/Queue";
 import store from "../../store";
-import { timeStarted } from "../clock/clockSlice";
-import { linesGenerated, customersGenerated } from "./engineSlice";
+import { timeElapsed, timeStarted } from "../clock/clockSlice";
+import { linesGenerated, customersGenerated, cashiersGenerated, customerAddedToLine, customerServed } from "./engineSlice";
 
 
 export const customerGenerationMiddleware: Middleware = ({ getState }) => {
@@ -11,6 +17,13 @@ export const customerGenerationMiddleware: Middleware = ({ getState }) => {
         if (action.type === timeStarted.type) {
             const customers = engine.generateCustomers();
             store.dispatch(customersGenerated(customers));
+        } else if (action.type === timeElapsed.type) {
+            // Generate customers every 10 ticks
+            const timeElapsed = clockService.getTimeElapsed();
+            if (timeElapsed % 10 === 0) {
+                const customers = engine.generateCustomers();
+                store.dispatch(customersGenerated(customers));
+            }
         }
         return next(action);
     }
@@ -21,6 +34,36 @@ export const lineGenerationMiddleware: Middleware = ({ getState }) => {
         if (action.type === timeStarted.type) {
             const lines = engine.generateLines();
             store.dispatch(linesGenerated(lines));
+        }
+        return next(action);
+    }
+}
+
+export const cashierGenerationMiddleware: Middleware = () => {
+    return next => (action: PayloadAction) => {
+        if (action.type === timeStarted.type) {
+            const cashiers = engine.generateCashiers();
+            engine.assignCashiersToLines();
+            store.dispatch(cashiersGenerated(cashiers));
+        }
+        return next(action);
+    }
+}
+
+export const addCustomerToLineMiddleware: Middleware = ({ getState }) => {
+    return next => (action: PayloadAction) => {
+        if (action.type === timeElapsed.type) {
+            const state = getState();
+            const waitingCustomerIds = queueService.list();
+            waitingCustomerIds.forEach(waitingCustomerId => {
+                const emptiestLine = lineService.getEmptiestLine();
+                if (emptiestLine) {
+                    queueService.removeCustomer(waitingCustomerId);
+                    lineService.addCustomerToLine(emptiestLine.id, waitingCustomerId);
+                    store.dispatch(customerAddedToLine({ customerId: waitingCustomerId, lineId: emptiestLine.id }))
+                }
+                // TODO: Handle no empty lines
+            })
         }
         return next(action);
     }
