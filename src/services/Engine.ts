@@ -9,9 +9,8 @@ class Engine {
     public generateLines(): Line[] {
         const NUMBER_OF_LINES = 4;
         const lines: Line[] = [];
-        const customers: Customer[] = [];
         for (let i = 0; i < NUMBER_OF_LINES; i++) {
-            lines.push(lineService.create(customers));
+            lines.push(lineService.create({}));
         }
         return lines;
     }
