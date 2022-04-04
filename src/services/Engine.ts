@@ -1,6 +1,8 @@
 import { customerService } from './Customer';
 import { lineService } from './Line';
-import { Customer, Line } from '../types';
+import { Cashier, Customer, Line } from '../types';
+import { cashierService } from './Cashier';
+import { queueService } from './Queue';
 
 
 class Engine {
@@ -40,9 +42,12 @@ class Engine {
 
         // Add some dummy customers
         for (let i = 0; i < NUMBER_OF_CUSTOMERS; i++) {
-            customers.push(customerService.create(
-                Math.floor(Math.random() * 10)
-            ));
+            const customer = customerService.create(
+                10 + Math.floor(Math.random() * 50)
+            )
+            customers.push(customer);
+            // Also add the customer to the restaurant queue
+            queueService.addCustomer(customer.id);
         }
         return customers;
     }
