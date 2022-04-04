@@ -3,13 +3,13 @@ import { Middleware } from 'redux'
 import clockReducer from './features/clock/clockSlice';
 import engineReducer from './features/engine/engineSlice';
 import restaurantReducer from './features/restaurant/restaurantSlice';
-import { customerGenerationMiddleware, lineGenerationMiddleware } from './features/engine/middleware';
-import { addCustomerToLineMiddleware, addCustomerToQueueMiddleware, lineSetupMiddleware } from './features/restaurant/middleware';
+import { customerGenerationMiddleware, lineGenerationMiddleware, addCustomerToLineMiddleware, cashierGenerationMiddleware, serveCustomerMiddleware, angryCustomerMiddleware } from './features/engine/middleware';
+import { linesUpdatedMiddleware } from './features/restaurant/middleware';
 
 
 const loggingMiddleware: Middleware = ({ getState }) => {
     return next => action => {
-        console.log("will dispatch action", action);
+        // console.log("will dispatch action", action);
         return next(action);
     }
 }
@@ -23,11 +23,11 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(
         customerGenerationMiddleware,
         lineGenerationMiddleware,
-        addCustomerToQueueMiddleware,
-        lineSetupMiddleware,
+        cashierGenerationMiddleware,
         addCustomerToLineMiddleware,
         serveCustomerMiddleware,
         angryCustomerMiddleware,
+        linesUpdatedMiddleware,
         loggingMiddleware
     )
 });
