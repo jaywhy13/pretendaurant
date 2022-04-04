@@ -5,7 +5,6 @@ import { Customer, Line } from '../types';
 
 class Engine {
 
-
     public generateLines(): Line[] {
         const NUMBER_OF_LINES = 4;
         const lines: Line[] = [];
@@ -24,6 +23,16 @@ class Engine {
         }
         return cashiers;
     }
+
+    public assignCashiersToLines() {
+        const cashiers = cashierService.list();
+        cashiers.forEach(cashier => {
+            const lines = lineService.getLinesWithoutCashiers();
+            const line = lines[0];
+            lineService.addCashierToLine(line.id, cashier.id);
+        })
+    }
+
     public generateCustomers(): Customer[] {
         const customers: Customer[] = [];
         const NUMBER_OF_CUSTOMERS = 1 + parseInt((Math.random() * 20).toString());
