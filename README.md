@@ -23,11 +23,6 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 - [ ] Implement a smarter decision making algorithm based on a poor man's version of Reinforcement Learning.
 - [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
 
-## Notes
-
-- How would things change if we were using a remote service in terms of the data types we're passing around?
-- If we want instant updates, we can't check the state. The state is updated sometime after the actions are dispatched and reduced.
-
 ## Changes
 
 - Move ID generation to the `LineService`.
