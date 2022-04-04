@@ -25,8 +25,13 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 
 ## Changes
 
-- Move ID generation to the `LineService`.
-- Made `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
+### Phase 1
+- [x] Move ID generation to the `LineService`.
+- [x] Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
+- [ ] Separate service interfaces from the ones used by the UI layer.
+- [ ] Make service calls async.
+- [ ] Implement push layer for publishing changes to the underlying models.
+
 
 
 ## Lessons
