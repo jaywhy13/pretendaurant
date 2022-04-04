@@ -21,6 +21,10 @@ class ClockService {
         this.timeElapsed += 1;
         this.onTick(1);
     }
+
+    public getTimeElapsed(): number {
+        return this.timeElapsed;
+    }
 }
 
 export const clockService = new ClockService();
