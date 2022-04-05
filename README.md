@@ -28,7 +28,7 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 ### Phase 1
 - [x] 1.1 - Move ID generation to the `LineService`.
 - [x] 1.2 - Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
-- [ ] 1.3 - Remove the local service layer abstraction
+- [x] 1.3 - Remove the local service layer abstraction
 - [ ] 1.4 - Separate service interfaces from the ones used by the UI layer.
 - [ ] 1.5 - Make service calls async.
 - [ ] 1.6 - Implement push layer for publishing changes to the underlying models.

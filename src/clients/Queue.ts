@@ -1,4 +1,4 @@
-class QueueService {
+class QueueClient {
 
     QUEUE: string[] = [];
 
@@ -15,4 +15,4 @@ class QueueService {
     }
 }
 
-export const queueService = new QueueService();
+export const queueClient = new QueueClient();

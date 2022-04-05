@@ -1,12 +1,12 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Middleware } from "@reduxjs/toolkit";
-import { cashierService } from "../../services/Cashier";
-import { clockService } from "../../services/Clock";
-import { customerService } from "../../services/Customer";
-import { engine } from "../../services/Engine";
-import { fulfilmentService } from "../../services/Fulfillment";
-import { lineService } from "../../services/Line";
-import { queueService } from "../../services/Queue";
+import { cashierClient } from "../../clients/Cashier";
+import { clockClient } from "../../clients/Clock";
+import { customerClient } from "../../clients/Customer";
+import { engineClient } from "../../clients/Engine";
+import { fulfilmentClient } from "../../clients/Fulfillment";
+import { lineClient } from "../../clients/Line";
+import { queueClient } from "../../clients/Queue";
 import store from "../../store";
 import { timeElapsed, timeStarted } from "../clock/clockSlice";
 import { linesGenerated, customersGenerated, cashiersGenerated, customerAddedToLine, customerServed } from "./engineSlice";
@@ -15,13 +15,13 @@ import { linesGenerated, customersGenerated, cashiersGenerated, customerAddedToL
 export const customerGenerationMiddleware: Middleware = ({ getState }) => {
     return next => (action: PayloadAction) => {
         if (action.type === timeStarted.type) {
-            const customers = engine.generateCustomers();
+            const customers = engineClient.generateCustomers();
             store.dispatch(customersGenerated(customers));
         } else if (action.type === timeElapsed.type) {
             // Generate customers every 10 ticks
-            const timeElapsed = clockService.getTimeElapsed();
+            const timeElapsed = clockClient.getTimeElapsed();
             if (timeElapsed % 10 === 0) {
-                const customers = engine.generateCustomers();
+                const customers = engineClient.generateCustomers();
                 store.dispatch(customersGenerated(customers));
             }
         }
@@ -32,7 +32,7 @@ export const customerGenerationMiddleware: Middleware = ({ getState }) => {
 export const lineGenerationMiddleware: Middleware = ({ getState }) => {
     return next => (action: PayloadAction) => {
         if (action.type === timeStarted.type) {
-            const lines = engine.generateLines();
+            const lines = engineClient.generateLines();
             store.dispatch(linesGenerated(lines));
         }
         return next(action);
@@ -42,8 +42,8 @@ export const lineGenerationMiddleware: Middleware = ({ getState }) => {
 export const cashierGenerationMiddleware: Middleware = () => {
     return next => (action: PayloadAction) => {
         if (action.type === timeStarted.type) {
-            const cashiers = engine.generateCashiers();
-            engine.assignCashiersToLines();
+            const cashiers = engineClient.generateCashiers();
+            engineClient.assignCashiersToLines();
             store.dispatch(cashiersGenerated(cashiers));
         }
         return next(action);
@@ -54,12 +54,12 @@ export const addCustomerToLineMiddleware: Middleware = ({ getState }) => {
     return next => (action: PayloadAction) => {
         if (action.type === timeElapsed.type) {
             const state = getState();
-            const waitingCustomerIds = queueService.list();
+            const waitingCustomerIds = queueClient.list();
             waitingCustomerIds.forEach(waitingCustomerId => {
-                const emptiestLine = lineService.getEmptiestLine();
+                const emptiestLine = lineClient.getEmptiestLine();
                 if (emptiestLine) {
-                    queueService.removeCustomer(waitingCustomerId);
-                    lineService.addCustomerToLine(emptiestLine.id, waitingCustomerId);
+                    queueClient.removeCustomer(waitingCustomerId);
+                    lineClient.addCustomerToLine(emptiestLine.id, waitingCustomerId);
                     store.dispatch(customerAddedToLine({ customerId: waitingCustomerId, lineId: emptiestLine.id }))
                 }
                 // TODO: Handle no empty lines
@@ -72,22 +72,22 @@ export const addCustomerToLineMiddleware: Middleware = ({ getState }) => {
 export const serveCustomerMiddleware: Middleware = ({ }) => {
     return next => (action: PayloadAction<number>) => {
         if (action.type === timeElapsed.type) {
-            const lines = lineService.list();
+            const lines = lineClient.list();
             lines.forEach(line => {
-                const cashier = cashierService.get(line.cashierId!);
+                const cashier = cashierClient.get(line.cashierId!);
                 if (cashier) {
                     const cashierId = cashier.id;
                     const lineId = line.id;
                     const speed = cashier?.speed!;
-                    const timeElapsed = clockService.getTimeElapsed();
+                    const timeElapsed = clockClient.getTimeElapsed();
                     if ((timeElapsed % speed) === 0) {
                         // cashier is due to serve again
                         if (line.customerIds.length) {
                             const customerId = line.customerIds[0];
                             // serve the customer, then remove them from the line
-                            fulfilmentService.serveCustomer(line.id, customerId, cashier.id);
-                            lineService.removeCustomerFromLine(line.id, customerId);
-                            store.dispatch(customerServed({ cashierId, lineId, customerId, duration: 0 }))
+                            const fulfillment = fulfilmentClient.serveCustomer({ lineId, customerId, cashierId, duration: 0 });
+                            lineClient.removeCustomerFromLine(line.id, customerId);
+                            store.dispatch(customerServed(fulfillment))
                         }
                     }
                 }
@@ -100,18 +100,18 @@ export const serveCustomerMiddleware: Middleware = ({ }) => {
 export const angryCustomerMiddleware: Middleware = ({ }) => {
     return next => (action: PayloadAction<number>) => {
         if (action.type === timeElapsed.type) {
-            const lines = lineService.list();
+            const lines = lineClient.list();
             lines.forEach(line => {
                 line.customerIds.forEach(customerId => {
-                    const customer = customerService.get(customerId);
+                    const customer = customerClient.get(customerId);
                     if (customer) {
-                        const isServed = fulfilmentService.list(line.id, customerId).length > 0;
+                        const isServed = fulfilmentClient.list(line.id, customerId).length > 0;
                         if (!isServed) {
                             const patience = customer.patience;
-                            const timeElapsed = clockService.getTimeElapsed();
+                            const timeElapsed = clockClient.getTimeElapsed();
                             if (patience <= timeElapsed) {
                                 console.log(customer.id, "is leaving the restaurant. patience is", patience, "timeElapsed is", timeElapsed);
-                                lineService.removeCustomerFromLine(line.id, customer.id);
+                                lineClient.removeCustomerFromLine(line.id, customer.id);
                             }
                         }
                     }

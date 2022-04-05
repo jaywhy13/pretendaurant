@@ -1,17 +1,17 @@
-import { customerService } from './Customer';
-import { lineService } from './Line';
+import { customerClient } from './Customer';
+import { lineClient } from './Line';
 import { Cashier, Customer, Line } from '../types';
-import { cashierService } from './Cashier';
-import { queueService } from './Queue';
+import { queueClient } from './Queue';
+import { cashierClient } from './Cashier';
 
 
-class Engine {
+class EngineClient {
 
     public generateLines(): Line[] {
         const NUMBER_OF_LINES = 4;
         const lines: Line[] = [];
         for (let i = 0; i < NUMBER_OF_LINES; i++) {
-            lines.push(lineService.create({}));
+            lines.push(lineClient.create({}));
         }
         return lines;
     }
@@ -21,17 +21,17 @@ class Engine {
         const cashiers: Cashier[] = [];
         for (let i = 0; i < NUMBER_OF_CASHIERS; i++) {
             let speed = 1 + parseInt((Math.random() * 10).toString())
-            cashiers.push(cashierService.create(speed));
+            cashiers.push(cashierClient.create(speed));
         }
         return cashiers;
     }
 
     public assignCashiersToLines() {
-        const cashiers = cashierService.list();
+        const cashiers = cashierClient.list();
         cashiers.forEach(cashier => {
-            const lines = lineService.getLinesWithoutCashiers();
+            const lines = lineClient.getLinesWithoutCashiers();
             const line = lines[0];
-            lineService.addCashierToLine(line.id, cashier.id);
+            lineClient.addCashierToLine(line.id, cashier.id);
         })
     }
 
@@ -42,16 +42,17 @@ class Engine {
 
         // Add some dummy customers
         for (let i = 0; i < NUMBER_OF_CUSTOMERS; i++) {
-            const customer = customerService.create(
-                10 + Math.floor(Math.random() * 50)
+            const customer = customerClient.create({
+                patience: 10 + Math.floor(Math.random() * 50)
+            }
             )
             customers.push(customer);
             // Also add the customer to the restaurant queue
-            queueService.addCustomer(customer.id);
+            queueClient.addCustomer(customer.id);
         }
         return customers;
     }
 
 }
 
-export const engine = new Engine();
+export const engineClient = new EngineClient();
