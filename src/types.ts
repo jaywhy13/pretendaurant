@@ -15,6 +15,7 @@ export interface Line {
 }
 
 export interface Fulfillment {
+    id: string;
     customerId: string;
     lineId: string;
     cashierId: string;

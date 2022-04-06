@@ -26,11 +26,12 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 ## Changes
 
 ### Phase 1
-- [x] Move ID generation to the `LineService`.
-- [x] Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
-- [ ] Separate service interfaces from the ones used by the UI layer.
-- [ ] Make service calls async.
-- [ ] Implement push layer for publishing changes to the underlying models.
+- [x] 1.1 - Move ID generation to the `LineService`.
+- [x] 1.2 - Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
+- [x] 1.3 - Remove the local service layer abstraction
+- [ ] 1.4 - Separate service interfaces from the ones used by the UI layer.
+- [ ] 1.5 - Make service calls async.
+- [ ] 1.6 - Implement push layer for publishing changes to the underlying models.
 
 
 
@@ -41,3 +42,4 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 - The middlewares should not be calling the services to create data. The engine should operate outside of the UI and the UI should just be concerned with rendering the current state of the data.
 - I needed to stop making mutations in the middlewares (e.g. removing the customer from the waiting queue). The services should implement that functionality and the middleware should just be updating state from those changes.
 - The middlewares were using the same interfaces from the services. There was no indirection introduced. This created problems when I realized I needed to change the shape of the line model. I should have really called those models or remote interfaces or something. I needed to store the time customers entered the line so we could calculate the time they've been waiting in line.
+- I was thinking of changing the calls between services and clients. The service is meant to be local abstraction over the underlying client. I'm not sure about the value the "service" abstraction provides though. The client currently does a great job of abstracting the underlying mechanism for retrieving data on customers, cashiers, etc... Do we need a service layer? If we're keeping the client layer and ditching the service layer, it needs to return local types, instead of remote ones. This will make the client's internal mechanisms fungible.

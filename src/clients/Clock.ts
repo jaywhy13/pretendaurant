@@ -1,4 +1,4 @@
-class ClockService {
+class ClockClient {
 
     private timeElapsed: number = 0;
     private tickRateMs: number = 1500;
@@ -27,4 +27,4 @@ class ClockService {
     }
 }
 
-export const clockService = new ClockService();
+export const clockClient = new ClockClient();

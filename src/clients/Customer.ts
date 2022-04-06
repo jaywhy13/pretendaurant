@@ -1,44 +1,55 @@
 import { RemoteCustomer } from "./types";
 import { v4 as uuidv4 } from 'uuid';
+import { Customer } from "../types";
 
 type RemoteCustomerParameters = Omit<Partial<RemoteCustomer>, "id">;
+type CustomerParameters = Omit<Partial<Customer>, "id">;
 
 export class CustomerClient {
-    CUSTOMER_DATA: RemoteCustomer[] = [];
+    REMOTE_CUSTOMER_DATA: RemoteCustomer[] = [];
 
-    public list(): RemoteCustomer[] {
-        return this.CUSTOMER_DATA;
+    public list(): Customer[] {
+        return this.REMOTE_CUSTOMER_DATA.map(remoteCustomer => this.toLocalCustomer(remoteCustomer));
     }
 
-    public get(id: string): RemoteCustomer | undefined {
-        return this.CUSTOMER_DATA.find(customer => customer.id === id);
+    public get(id: string): Customer | undefined {
+        const remoteCustomer = this.REMOTE_CUSTOMER_DATA.find(customer => customer.id === id);
+        if (remoteCustomer) {
+            return this.toLocalCustomer(remoteCustomer);
+        }
     }
 
-    public create(patience: number): RemoteCustomer {
+    public create(params: CustomerParameters): Customer {
         const customer: RemoteCustomer = {
             id: uuidv4(),
-            patience,
+            patience: params.patience!
         }
-        this.CUSTOMER_DATA.push(customer);
-        return customer;
+        this.REMOTE_CUSTOMER_DATA.push(customer);
+        return this.toLocalCustomer(customer);
     }
 
-    public update(id: string, parameters: RemoteCustomerParameters) {
-        const matchingCustomer = this.get(id);
-        if (matchingCustomer) {
-            this.CUSTOMER_DATA = this.CUSTOMER_DATA.map((remoteCustomer) => {
-                if (remoteCustomer.id === id) {
-                    return {
-                        ...matchingCustomer,
-                        ...parameters
-                    }
-                }
-                return remoteCustomer;
-            })
+    private updateRemote(id: string, params: RemoteCustomerParameters): RemoteCustomer | undefined {
+        const index = this.REMOTE_CUSTOMER_DATA.findIndex(remoteCustomer => remoteCustomer.id === id);
+        if (index >= 0) {
+            const remoteCustomer = this.REMOTE_CUSTOMER_DATA[index];
+            this.REMOTE_CUSTOMER_DATA[index] = {
+                ...remoteCustomer,
+                ...params
+            }
+            return this.REMOTE_CUSTOMER_DATA[index];
         }
     }
 
+    public update(id: string, parameters: RemoteCustomerParameters): Customer | undefined {
+        const remoteCustomer = this.updateRemote(id, parameters);
+        return remoteCustomer ? this.toLocalCustomer(remoteCustomer) : undefined;
+    }
 
-
-
+    private toLocalCustomer(remoteCustomer: RemoteCustomer): Customer {
+        return {
+            ...remoteCustomer
+        }
+    }
 }
+
+export const customerClient = new CustomerClient();

@@ -1,30 +1,60 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Cashier } from '../types';
 import { RemoteCashier } from './types';
 
-const CASHIER_DATA: RemoteCashier[] = [];
+const REMOTE_CASHIER_DATA: RemoteCashier[] = [];
+
+export type CashierProperties = Omit<Partial<Cashier>, "id">;
+export type RemoteCashierProperties = Omit<Partial<RemoteCashier>, "id">;
 
 export class CashierClient {
-    public list(): RemoteCashier[] {
-        return CASHIER_DATA;
+    public list(): Cashier[] {
+        return REMOTE_CASHIER_DATA.map(remoteCashier => this.toLocalCashier(remoteCashier));
     }
 
-    public create(speed: number): RemoteCashier {
+    public create(speed: number): Cashier {
         const cashier: RemoteCashier = {
             id: uuidv4(),
             speed,
         }
-        CASHIER_DATA.push(cashier);
-        return cashier;
+        REMOTE_CASHIER_DATA.push(cashier);
+        return this.toLocalCashier(cashier);
     }
 
-    public get(id: string): RemoteCashier | undefined {
-        return CASHIER_DATA.find(candidateCashier => candidateCashier.id === id);
+    public get(id: string): Cashier | undefined {
+        const remoteCashier = REMOTE_CASHIER_DATA.find(candidateCashier => candidateCashier.id === id);
+        if (remoteCashier) {
+            return this.toLocalCashier(remoteCashier);
+        }
     }
 
-    public update(cashier: RemoteCashier) {
-        const matchingCashier = CASHIER_DATA.find((candidate) => candidate.id === cashier.id);
-        if (matchingCashier) {
-            matchingCashier.speed = cashier.speed;
+    private getRemote(id: string): RemoteCashier | undefined {
+        const index = REMOTE_CASHIER_DATA.findIndex(candidateCashier => candidateCashier.id === id);
+        if (index >= 0) {
+            return REMOTE_CASHIER_DATA[index];
+        }
+    }
+
+    public update(id: string, properties: CashierProperties): Cashier | undefined {
+        const remoteCashier = this.updateRemote(id, { ...properties })
+        return remoteCashier ? this.toLocalCashier(remoteCashier) : undefined;
+    }
+
+    private updateRemote(id: string, properties: RemoteCashierProperties): RemoteCashier | undefined {
+        const index = REMOTE_CASHIER_DATA.findIndex(candidateCashier => candidateCashier.id === id);
+        if (index >= 0) {
+            const remoteCashier = REMOTE_CASHIER_DATA[index];
+            REMOTE_CASHIER_DATA[index] = {
+                ...remoteCashier,
+                ...properties
+            }
+            return this.toLocalCashier(remoteCashier);
+        }
+    }
+
+    private toLocalCashier(cashier: RemoteCashier): Cashier {
+        return {
+            ...cashier
         }
     }
 }
