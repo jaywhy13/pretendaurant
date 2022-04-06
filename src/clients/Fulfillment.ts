@@ -4,17 +4,15 @@ import { RemoteFulfillment } from './types';
 
 export type FulfillmentParams = Omit<Fulfillment, "id">;
 
-class FulfillmentClient {
+export class FulfillmentClient {
 
-    CUSTOMERS_SERVED: RemoteFulfillment[] = [];
+    private CUSTOMERS_SERVED: RemoteFulfillment[] = [];
 
     public serveCustomer(params: FulfillmentParams): Fulfillment {
-        const { cashierId, customerId } = params;
         const fulfillment = {
             id: uuidv4(),
             ...params
         }
-        console.log(cashierId, "is serving ", customerId);
         this.CUSTOMERS_SERVED = [...this.CUSTOMERS_SERVED,
             fulfillment];
         return this.toLocalFulfillment(fulfillment);

@@ -11,7 +11,6 @@ export interface RemoteCashier {
 export interface RemoteLine {
     id: string;
     cashierId?: string;
-    customersInLine: RemoteCustomerInLine[];
 }
 
 export interface RemoteCustomerInLine {

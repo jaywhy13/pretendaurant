@@ -1,16 +1,26 @@
-class ClockClient {
+export type OnTickCallback = (timeElapsed: number) => void;
 
-    private timeElapsed: number = 0;
+
+export class ClockClient {
+
+    private timeElapsed: number | undefined;
     private tickRateMs: number = 1500;
-    private onTick: (timeElapsed: number) => void = (timeElapsed) => { };
+    private onTickCallbacks: OnTickCallback[] = [];
 
-    public start({ onTick }: { onTick: (timeElapsed: number) => void }) {
-        console.log("Clock is starting");
-        this.onTick = onTick;
+    public constructor(tickRateMs: number = 1500) {
+        this.tickRateMs = tickRateMs;
+    }
+
+    public start() {
+        this.tick();
 
         setInterval(() => {
             this.tick()
         }, this.tickRateMs)
+    }
+
+    public addOnTickCallback(onTickCallback: OnTickCallback) {
+        this.onTickCallbacks.push(onTickCallback);
     }
 
     public setTickRate(tickRateMs: number) {
@@ -18,12 +28,26 @@ class ClockClient {
     }
 
     private tick() {
-        this.timeElapsed += 1;
-        this.onTick(1);
+        if (this.timeElapsed === undefined) {
+            this.timeElapsed = 0;
+        } else {
+            this.timeElapsed += 1;
+        }
+
+        this.onTickCallbacks.forEach((callback) => {
+            callback(this.timeElapsed!);
+        })
     }
 
     public getTimeElapsed(): number {
+        if (this.timeElapsed === undefined) {
+            throw new Error("The clock hasn't started yet, cannot get time elapsed")
+        }
         return this.timeElapsed;
+    }
+
+    public getTickRateMs(): number {
+        return this.tickRateMs;
     }
 }
 
