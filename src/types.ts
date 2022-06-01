@@ -11,7 +11,11 @@ export interface Customer {
 export interface Line {
     id: string;
     cashierId?: string;
-    customerIds: string[];
+}
+
+export interface CustomerInLine {
+    lineId: string;
+    customerId: string;
 }
 
 export interface Fulfillment {
