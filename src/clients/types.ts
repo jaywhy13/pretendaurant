@@ -14,9 +14,9 @@ export interface RemoteLine {
 }
 
 export interface RemoteCustomerInLine {
-    customerId: string;
-    lineId: string;
-    joinedAt: number;
+  customer: RemoteCustomer;
+  lineId: string;
+  joinedAt: number;
 }
 
 export interface RemoteFulfillment {

@@ -19,6 +19,10 @@ export class CustomerClient {
         }
     }
 
+    public getRemote(id: string): RemoteCustomer | undefined {
+        return this.REMOTE_CUSTOMER_DATA.find((customer) => customer.id === id);
+    }
+
     public create(params: CustomerParameters): Customer {
         const customer: RemoteCustomer = {
             id: uuidv4(),

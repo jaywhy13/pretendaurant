@@ -1,4 +1,5 @@
 import { CustomerInLine, Line } from "../types";
+import { customerClient, CustomerClient } from "./Customer";
 import { RemoteCustomerInLine, RemoteLine } from "./types";
 
 
@@ -33,10 +34,17 @@ export interface ListFilters {
 export class LineClient {
     private REMOTE_LINES: RemoteLine[] = [];
     private REMOTE_CUSTOMERS_IN_LINE: RemoteCustomerInLine[] = [];
+    private customerClient: CustomerClient;
 
+    public constructor(customerClient?: CustomerClient) {
+        this.customerClient = customerClient || new CustomerClient();
+    }
 
     public list(listArguments?: ListArguments): Line[] {
-        let lines = this.REMOTE_LINES.map(line => this.toLocalLine(line))
+        let lines = this.REMOTE_LINES.map((line) => {
+            const remoteCustomersInLine = this.getRemoteCustomersInLine(line.id);
+            return this.toLocalLine(line, remoteCustomersInLine);
+        });
 
         const filters = listArguments?.filters;
         if (filters && "cashierId" in filters) {
@@ -60,9 +68,11 @@ export class LineClient {
     }
 
     public get(id: string): Line | undefined {
-        const remoteLine = this.REMOTE_LINES.find(candidateLine => candidateLine.id === id);
+        const remoteLine = this.REMOTE_LINES.find((candidateLine) => candidateLine.id === id);
+        const remoteCustomersInLine = this.getRemoteCustomersInLine(id);
+
         if (remoteLine) {
-            return this.toLocalLine(remoteLine);
+            return this.toLocalLine(remoteLine, remoteCustomersInLine);
         }
     }
 
@@ -74,7 +84,7 @@ export class LineClient {
             cashierId,
         };
         this.REMOTE_LINES.push(remoteLine);
-        return this.toLocalLine(remoteLine);
+        return this.toLocalLine(remoteLine, this.getRemoteCustomersInLine(id));
     }
 
     private updateRemote(id: string, params: RemoteLineParameters): RemoteLine {
@@ -98,14 +108,18 @@ export class LineClient {
         }
     }
 
+    private getRemoteCustomersInLine(lineId: string): RemoteCustomerInLine[] {
+        return this.REMOTE_CUSTOMERS_IN_LINE.filter((remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId);
+    }
+
     public addCustomerToLine(lineId: string, customerId: string): CustomerInLine {
+        const remoteCustomer = this.customerClient.getRemote(customerId);
         const remoteCustomerInLine = {
             lineId,
-            customerId,
-            joinedAt: new Date().getTime()
-        }
+            customer: remoteCustomer!,
+            joinedAt: new Date().getTime(),
+        };
         this.REMOTE_CUSTOMERS_IN_LINE.push(remoteCustomerInLine);
-
         return this.toLocalCustomerInLine(remoteCustomerInLine);
     }
 
@@ -123,34 +137,47 @@ export class LineClient {
     public addCashierToLine(lineId: string, cashierId: string): Line | undefined {
         const remoteLine = this.getRemote(lineId);
         if (remoteLine) {
-            return this.toLocalLine(this.updateRemote(lineId, {
-                cashierId
-            }))
+            const updatedRemoteLine = this.updateRemote(lineId, { cashierId });
+            const remoteCustomersInLine = this.getRemoteCustomersInLine(lineId);
+            return this.toLocalLine(updatedRemoteLine, remoteCustomersInLine);
         }
     }
 
     public removeCashierFromLine(lineId: string, cashierId: string): Line | undefined {
         const remoteLine = this.getRemote(lineId);
-        if (remoteLine) {
-            return this.toLocalLine(this.updateRemote(lineId, {
-                cashierId: undefined
-            }))
+        if (remoteLine && remoteLine.cashierId === cashierId) {
+            const updatedRemoteLine = this.updateRemote(lineId, { cashierId: undefined });
+            const remoteCustomersInLine = this.getRemoteCustomersInLine(lineId);
+            return this.toLocalLine(updatedRemoteLine, remoteCustomersInLine);
         }
     }
 
-
     public getLinesWithoutCashiers(): Line[] {
-        return this.REMOTE_LINES.filter(line => line.cashierId === undefined).map(remoteLine => this.toLocalLine(remoteLine))
+        return this.REMOTE_LINES.filter((line) => line.cashierId === undefined).map((remoteLine) => {
+            const remoteCustomersInLine = this.getRemoteCustomersInLine(remoteLine.id);
+            return this.toLocalLine(remoteLine, remoteCustomersInLine);
+        });
     }
 
-    private toLocalLine(remoteLine: RemoteLine): Line {
-        return { id: remoteLine.id, cashierId: remoteLine.cashierId }
+    private toLocalLine(remoteLine: RemoteLine, remoteCustomersInLine: RemoteCustomerInLine[]): Line {
+        const localCustomersInLine = remoteCustomersInLine.map((remoteCustomerInLine) =>
+            this.toLocalCustomerInLine(remoteCustomerInLine),
+        );
+
+        return {
+            id: remoteLine.id,
+            cashierId: remoteLine.cashierId,
+            customersInLine: localCustomersInLine,
+        };
     }
 
     private toLocalCustomerInLine(remoteCustomerInLine: RemoteCustomerInLine): CustomerInLine {
-        return { lineId: remoteCustomerInLine.lineId, customerId: remoteCustomerInLine.customerId }
+        const localCustomer = {
+            id: remoteCustomerInLine.customer.id,
+            patience: remoteCustomerInLine.customer.patience,
+        };
+        return { lineId: remoteCustomerInLine.lineId, customer: localCustomer };
     }
-
 }
 
-export const lineClient = new LineClient();
+export const lineClient = new LineClient(customerClient);
