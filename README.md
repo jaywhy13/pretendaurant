@@ -2,6 +2,8 @@
 
 A pretend-restaurant that's on its way to using Reinforcement Learning to manage the staff of the restaurant.
 
+I'm doing more detailed documentation on the project itself [here](./docs/developer.md).
+
 ## Requirements
 
 ### Phase 1
