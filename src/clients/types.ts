@@ -1,16 +1,16 @@
 export interface RemoteCustomer {
-    id: string;
-    patience: number;
+  id: string;
+  patience: number;
 }
 
 export interface RemoteCashier {
-    id: string;
-    speed: number;
+  id: string;
+  speed: number;
 }
 
 export interface RemoteLine {
-    id: string;
-    cashierId?: string;
+  id: string;
+  cashierId?: string;
 }
 
 export interface RemoteCustomerInLine {
@@ -20,9 +20,9 @@ export interface RemoteCustomerInLine {
 }
 
 export interface RemoteFulfillment {
-    id: string;
-    customerId: string;
-    lineId: string;
-    cashierId: string;
-    duration: number;
+  id: string;
+  customerId: string;
+  lineId: string;
+  cashierId: string;
+  duration: number;
 }
