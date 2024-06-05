@@ -56,10 +56,10 @@ export class LineClient {
     if (listArguments?.orderBy === LineOrderBy.CUSTOMERS_IN_LINE) {
       lines = lines.sort((line1: Line, line2: Line) => {
         const numberOfCustomersInLine1 = line1.customersInLine.filter(
-          (remoteCustomerInLine) => remoteCustomerInLine.lineId === line1.id,
+          (remoteCustomerInLine) => remoteCustomerInLine.lineId === line1.id
         ).length;
         const numberOfCustomersInLine2 = line2.customersInLine.filter(
-          (remoteCustomerInLine) => remoteCustomerInLine.lineId === line2.id,
+          (remoteCustomerInLine) => remoteCustomerInLine.lineId === line2.id
         ).length;
 
         if (listArguments.order === Order.DESCENDING) {
@@ -113,7 +113,9 @@ export class LineClient {
   }
 
   private getRemoteCustomersInLine(lineId: string): RemoteCustomerInLine[] {
-    return this.REMOTE_CUSTOMERS_IN_LINE.filter((remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId);
+    return this.REMOTE_CUSTOMERS_IN_LINE.filter(
+      (remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId
+    );
   }
 
   public addCustomerToLine(lineId: string, customerId: string): CustomerInLine {
@@ -130,7 +132,7 @@ export class LineClient {
   public removeCustomerFromLine(lineId: string, customerId: string) {
     const index = this.REMOTE_CUSTOMERS_IN_LINE.findIndex(
       (remoteCustomerInLine) =>
-        remoteCustomerInLine.customer?.id === customerId && remoteCustomerInLine.lineId === lineId,
+        remoteCustomerInLine.customer?.id === customerId && remoteCustomerInLine.lineId === lineId
     );
     if (index >= 0) {
       this.REMOTE_CUSTOMERS_IN_LINE.splice(index, 1);
@@ -139,7 +141,7 @@ export class LineClient {
 
   public getCustomersInLine(lineId: string): CustomerInLine[] {
     return this.REMOTE_CUSTOMERS_IN_LINE.filter(
-      (remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId,
+      (remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId
     ).map((remoteCustomerInLine) => this.toLocalCustomerInLine(remoteCustomerInLine));
   }
 
@@ -173,7 +175,7 @@ export class LineClient {
     let smallestLineLength = Number.MAX_SAFE_INTEGER;
     this.REMOTE_LINES.forEach((remoteLine) => {
       const customersInLine = this.REMOTE_CUSTOMERS_IN_LINE.filter(
-        (remoteCustomerInLine) => remoteCustomerInLine.lineId === remoteLine.id,
+        (remoteCustomerInLine) => remoteCustomerInLine.lineId === remoteLine.id
       );
       if (customersInLine.length < smallestLineLength) {
         smallestLineLength = customersInLine.length;
@@ -185,7 +187,7 @@ export class LineClient {
 
   private toLocalLine(remoteLine: RemoteLine, remoteCustomersInLine: RemoteCustomerInLine[]): Line {
     const localCustomersInLine = remoteCustomersInLine.map((remoteCustomerInLine) =>
-      this.toLocalCustomerInLine(remoteCustomerInLine),
+      this.toLocalCustomerInLine(remoteCustomerInLine)
     );
 
     return {

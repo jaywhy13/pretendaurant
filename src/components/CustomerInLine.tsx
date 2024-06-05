@@ -1,12 +1,9 @@
-import React from 'react';
-
+import React from "react";
 
 interface IProps {
-    customerId: string
+  customerId: string;
 }
 
 export const CustomerInLine: React.FC<IProps> = ({ customerId }) => {
-    return <div key={customerId}>
-        {customerId}
-    </div>
-}
+  return <div key={customerId}>{customerId}</div>;
+};

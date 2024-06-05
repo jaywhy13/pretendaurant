@@ -16,7 +16,6 @@ export class CustomerClient {
     const remoteCustomer = this.REMOTE_CUSTOMER_DATA.find((customer) => customer.id === id);
     if (remoteCustomer) {
       return this.toLocalCustomer(remoteCustomer);
-
     }
   }
 

@@ -1,10 +1,9 @@
 /**
-  * This class is responsible for managing customers who
-  * haven't yet entered a line.
-  * CUstomers are transitioned from the queue to a line
-  */
+ * This class is responsible for managing customers who
+ * haven't yet entered a line.
+ * CUstomers are transitioned from the queue to a line
+ */
 export class QueueClient {
-
   QUEUE: string[] = [];
 
   public addCustomer(customerId: string) {
@@ -12,7 +11,9 @@ export class QueueClient {
   }
 
   public removeCustomer(customerId: string) {
-    this.QUEUE = this.QUEUE.filter((candidateCustomerId: string) => candidateCustomerId !== customerId);
+    this.QUEUE = this.QUEUE.filter(
+      (candidateCustomerId: string) => candidateCustomerId !== customerId
+    );
   }
 
   public list(): string[] {

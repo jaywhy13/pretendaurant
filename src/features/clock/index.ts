@@ -3,11 +3,10 @@ import store from "../../store";
 import { timeStarted as timeStartedAction, timeElapsed as timeElapsedAction } from "./clockSlice";
 
 export const startClock = () => {
-  store.dispatch(timeStartedAction())
+  store.dispatch(timeStartedAction());
   clockClient.start();
 
   clockClient.addOnTickCallback((timeElapsed: number) => {
-    store.dispatch(timeElapsedAction(timeElapsed))
-  })
-
-}
+    store.dispatch(timeElapsedAction(timeElapsed));
+  });
+};

@@ -12,7 +12,7 @@ const initialState: restaurantState = {
 };
 
 const restaurantSlice = createSlice({
-  name: 'restaurant',
+  name: "restaurant",
   initialState,
   reducers: {
     linesUpdated: (state: restaurantState, action: PayloadAction<Line[]>) => {
@@ -22,11 +22,10 @@ const restaurantSlice = createSlice({
       console.log("customersInLineUpdated", action.payload);
 
       state.customersInLine = [...action.payload];
-    }
-  }
-})
+    },
+  },
+});
 
 export const { linesUpdated, customersInLineUpdated } = restaurantSlice.actions;
-
 
 export default restaurantSlice.reducer;

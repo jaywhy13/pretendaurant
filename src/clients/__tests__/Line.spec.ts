@@ -3,188 +3,196 @@ import { CustomerClient } from "../Customer";
 import { LineClient, LineOrderBy, Order } from "../Line";
 
 describe("Line Client", () => {
-    let lineClient: LineClient;
-    let customerClient: CustomerClient;
+  let lineClient: LineClient;
+  let customerClient: CustomerClient;
 
-    beforeEach(() => {
-        customerClient = new CustomerClient();
-        lineClient = new LineClient(customerClient);
+  beforeEach(() => {
+    customerClient = new CustomerClient();
+    lineClient = new LineClient(customerClient);
+  });
+
+  describe("create", () => {
+    it("creates lines with an ID", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({ cashierId });
+      expect(line.id).toBeTruthy();
     });
 
-    describe("create", () => {
-        it("creates lines with an ID", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({ cashierId });
-            expect(line.id).toBeTruthy();
-        });
+    it("creates lines with cashier", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({ cashierId });
+      expect(line).toMatchObject({ cashierId });
+    });
+  });
 
-        it("creates lines with cashier", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({ cashierId });
-            expect(line).toMatchObject({ cashierId });
-        });
+  describe("list", () => {
+    it("orders lines by length ascending", () => {
+      const customer1 = customerClient.create({});
+      const customer2 = customerClient.create({});
+      const customer3 = customerClient.create({});
+
+      const lineWithTwoCustomers = lineClient.create({});
+
+      [customer1.id, customer2.id].forEach((customerId) => {
+        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      });
+
+      const lineWithOneCustomer = lineClient.create({});
+      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+
+      const lineWithNoCustomers = lineClient.create({});
+
+      const lines = lineClient.list({
+        order: Order.ASCENDING,
+        orderBy: LineOrderBy.CUSTOMERS_IN_LINE,
+      });
+      const lineIds = lines.map((line) => line.id);
+
+      expect(lineIds).toEqual([
+        lineWithNoCustomers.id,
+        lineWithOneCustomer.id,
+        lineWithTwoCustomers.id,
+      ]);
     });
 
-    describe("list", () => {
-        it("orders lines by length ascending", () => {
-            const customer1 = customerClient.create({});
-            const customer2 = customerClient.create({});
-            const customer3 = customerClient.create({});
+    it("orders lines by length descending", () => {
+      const customer1 = customerClient.create({});
+      const customer2 = customerClient.create({});
+      const customer3 = customerClient.create({});
 
-            const lineWithTwoCustomers = lineClient.create({});
+      const lineWithTwoCustomers = lineClient.create({});
+      [customer1.id, customer2.id].forEach((customerId) => {
+        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      });
 
-            [customer1.id, customer2.id].forEach((customerId) => {
-                lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
-            });
+      const lineWithOneCustomer = lineClient.create({});
+      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
 
-            const lineWithOneCustomer = lineClient.create({});
-            lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+      const lineWithNoCustomers = lineClient.create({});
 
-            const lineWithNoCustomers = lineClient.create({});
+      const lines = lineClient.list({
+        order: Order.DESCENDING,
+        orderBy: LineOrderBy.CUSTOMERS_IN_LINE,
+      });
+      const lineIds = lines.map((line) => line.id);
 
-            const lines = lineClient.list({
-                order: Order.ASCENDING,
-                orderBy: LineOrderBy.CUSTOMERS_IN_LINE,
-            });
-            const lineIds = lines.map((line) => line.id);
-
-            expect(lineIds).toEqual([lineWithNoCustomers.id, lineWithOneCustomer.id, lineWithTwoCustomers.id]);
-        });
-
-        it("orders lines by length descending", () => {
-            const customer1 = customerClient.create({});
-            const customer2 = customerClient.create({});
-            const customer3 = customerClient.create({});
-
-            const lineWithTwoCustomers = lineClient.create({});
-            [customer1.id, customer2.id].forEach((customerId) => {
-                lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
-            });
-
-            const lineWithOneCustomer = lineClient.create({});
-            lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
-
-            const lineWithNoCustomers = lineClient.create({});
-
-            const lines = lineClient.list({
-                order: Order.DESCENDING,
-                orderBy: LineOrderBy.CUSTOMERS_IN_LINE,
-            });
-            const lineIds = lines.map((line) => line.id);
-
-            expect(lineIds).toEqual([lineWithTwoCustomers.id, lineWithOneCustomer.id, lineWithNoCustomers.id]);
-        });
-
-        describe("filters", () => {
-            it("returns cashier if correct ID is provided", () => {
-                const cashierId = uuidv4();
-                const line = lineClient.create({ cashierId });
-
-                const lines = lineClient.list({ filters: { cashierId } });
-                expect(lines).toHaveLength(1);
-
-                expect(lines[0]).toMatchObject({ cashierId });
-            });
-
-            it("returns nothing if incorrect ID is provided", () => {
-                const cashierId = uuidv4();
-                const line = lineClient.create({ cashierId });
-
-                // Pass a different ID
-                const lines = lineClient.list({
-                    filters: { cashierId: uuidv4() },
-                });
-                expect(lines).toHaveLength(0);
-            });
-
-            it("allows filtering by no cashiers", () => {
-                const line = lineClient.create({}); // create line without cashier
-                const lines = lineClient.list({
-                    filters: { cashierId: undefined },
-                });
-                expect(lines).toHaveLength(1);
-                expect(lines[0]).toMatchObject({ cashierId: undefined });
-            });
-        });
+      expect(lineIds).toEqual([
+        lineWithTwoCustomers.id,
+        lineWithOneCustomer.id,
+        lineWithNoCustomers.id,
+      ]);
     });
 
-    describe("customers in line", () => {
-        it("add customers to the line", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({ cashierId });
-            const customer = customerClient.create({});
-            const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
+    describe("filters", () => {
+      it("returns cashier if correct ID is provided", () => {
+        const cashierId = uuidv4();
+        const line = lineClient.create({ cashierId });
 
-            expect(customerInLine).toEqual({ lineId: line.id, customer });
+        const lines = lineClient.list({ filters: { cashierId } });
+        expect(lines).toHaveLength(1);
+
+        expect(lines[0]).toMatchObject({ cashierId });
+      });
+
+      it("returns nothing if incorrect ID is provided", () => {
+        const cashierId = uuidv4();
+        const line = lineClient.create({ cashierId });
+
+        // Pass a different ID
+        const lines = lineClient.list({
+          filters: { cashierId: uuidv4() },
         });
+        expect(lines).toHaveLength(0);
+      });
 
-        it("add customers to the line object", () => {
-            const cashierId = uuidv4();
-            let line = lineClient.create({ cashierId });
-
-            const customer = customerClient.create({});
-            const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
-
-            line = lineClient.get(line.id)!;
-            expect(line.customersInLine).toEqual([customerInLine]);
+      it("allows filtering by no cashiers", () => {
+        const line = lineClient.create({}); // create line without cashier
+        const lines = lineClient.list({
+          filters: { cashierId: undefined },
         });
+        expect(lines).toHaveLength(1);
+        expect(lines[0]).toMatchObject({ cashierId: undefined });
+      });
+    });
+  });
 
-        it("removes customers from the line", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({ cashierId });
+  describe("customers in line", () => {
+    it("add customers to the line", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({ cashierId });
+      const customer = customerClient.create({});
+      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
 
-            const customer = customerClient.create({});
-            const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
-
-            const anotherCustomer = customerClient.create({});
-            const anotherCustomerInLine = lineClient.addCustomerToLine(line.id, anotherCustomer.id);
-
-            lineClient.removeCustomerFromLine(line.id, customer.id);
-
-            const customersInLine = lineClient.getCustomersInLine(line.id);
-            expect(customersInLine).not.toContainEqual(customerInLine);
-
-            expect(customersInLine).toContainEqual(anotherCustomerInLine);
-        });
-
-        it("gets emptiest line", () => {
-            const customer1 = customerClient.create({});
-            const customer2 = customerClient.create({});
-            const customer3 = customerClient.create({});
-
-            const lineWithTwoCustomers = lineClient.create({});
-            [customer1.id, customer2.id].forEach((customerId) => {
-                lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
-            });
-
-            const lineWithOneCustomer = lineClient.create({});
-            lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
-
-            const lineWithNoCustomers = lineClient.create({});
-
-            const emptiestLine = lineClient.getEmptiestLine();
-            expect(emptiestLine).toMatchObject(lineWithNoCustomers);
-        });
+      expect(customerInLine).toEqual({ lineId: line.id, customer });
     });
 
-    describe("cashier", () => {
-        it("adds cashier to the line", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({});
+    it("add customers to the line object", () => {
+      const cashierId = uuidv4();
+      let line = lineClient.create({ cashierId });
 
-            const updatedLine = lineClient.addCashierToLine(line.id, cashierId);
+      const customer = customerClient.create({});
+      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
 
-            expect(updatedLine).not.toBeUndefined();
-            expect(updatedLine!.cashierId).toBe(cashierId);
-        });
-
-        it("removes cashier from the line", () => {
-            const cashierId = uuidv4();
-            const line = lineClient.create({ cashierId });
-
-            const lineWithCashierRemoved = lineClient.removeCashierFromLine(line.id, cashierId);
-            expect(lineWithCashierRemoved).not.toBeUndefined();
-            expect(lineWithCashierRemoved!.cashierId).toBeUndefined();
-        });
+      line = lineClient.get(line.id)!;
+      expect(line.customersInLine).toEqual([customerInLine]);
     });
+
+    it("removes customers from the line", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({ cashierId });
+
+      const customer = customerClient.create({});
+      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
+
+      const anotherCustomer = customerClient.create({});
+      const anotherCustomerInLine = lineClient.addCustomerToLine(line.id, anotherCustomer.id);
+
+      lineClient.removeCustomerFromLine(line.id, customer.id);
+
+      const customersInLine = lineClient.getCustomersInLine(line.id);
+      expect(customersInLine).not.toContainEqual(customerInLine);
+
+      expect(customersInLine).toContainEqual(anotherCustomerInLine);
+    });
+
+    it("gets emptiest line", () => {
+      const customer1 = customerClient.create({});
+      const customer2 = customerClient.create({});
+      const customer3 = customerClient.create({});
+
+      const lineWithTwoCustomers = lineClient.create({});
+      [customer1.id, customer2.id].forEach((customerId) => {
+        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      });
+
+      const lineWithOneCustomer = lineClient.create({});
+      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+
+      const lineWithNoCustomers = lineClient.create({});
+
+      const emptiestLine = lineClient.getEmptiestLine();
+      expect(emptiestLine).toMatchObject(lineWithNoCustomers);
+    });
+  });
+
+  describe("cashier", () => {
+    it("adds cashier to the line", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({});
+
+      const updatedLine = lineClient.addCashierToLine(line.id, cashierId);
+
+      expect(updatedLine).not.toBeUndefined();
+      expect(updatedLine!.cashierId).toBe(cashierId);
+    });
+
+    it("removes cashier from the line", () => {
+      const cashierId = uuidv4();
+      const line = lineClient.create({ cashierId });
+
+      const lineWithCashierRemoved = lineClient.removeCashierFromLine(line.id, cashierId);
+      expect(lineWithCashierRemoved).not.toBeUndefined();
+      expect(lineWithCashierRemoved!.cashierId).toBeUndefined();
+    });
+  });
 });
