@@ -36,7 +36,7 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
   - [x] 1.5.1 - Enable listing of customers in the line (add restaurant state for customers in line, populate it when customers are generated)
   - [x] 1.5.2 - Change `Line` to store the customers in the line.
   - [x] 1.5.3 - Nested `customer` under `CustomerInLine` object.
-- [ ] 1.6 - Separate service interfaces from the ones used by the UI layer.
+- [x] 1.6 - Separate service interfaces from the ones used by the UI layer.
 - [ ] 1.7 - Make service calls async.
 - [ ] 1.8 - Implement push layer for publishing changes to the underlying models.
 - [ ] 1.9 - Remove business logic from the middleware layer. Perhaps the middleware should only trigger the engine, and the engine should determine what happens.
