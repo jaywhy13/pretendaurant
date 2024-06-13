@@ -16,3 +16,6 @@ So far we've got two slices:
 - Restaurant Slice - this stores all the state related to the restaurant itself.
 
 
+## Types
+
+We have our types stored in `types.ts` files. There's a general `types.ts` file in the `src` directory and we also have one in the `clients` directory.
