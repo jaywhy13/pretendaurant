@@ -17,7 +17,7 @@ import {
   customerServed,
 } from "./engineSlice";
 
-export const customerGenerationMiddleware: Middleware = ({}) => {
+export const customerGenerationMiddleware: Middleware = ({ }) => {
   return (next) => (action: PayloadAction) => {
     if (action.type === timeStarted.type) {
       const customers = engineClient.generateCustomers(5);
@@ -34,7 +34,7 @@ export const customerGenerationMiddleware: Middleware = ({}) => {
   };
 };
 
-export const lineGenerationMiddleware: Middleware = ({}) => {
+export const lineGenerationMiddleware: Middleware = ({ }) => {
   return (next) => (action: PayloadAction) => {
     if (action.type === timeStarted.type) {
       const lines = engineClient.generateLines();
@@ -44,10 +44,10 @@ export const lineGenerationMiddleware: Middleware = ({}) => {
   };
 };
 
-export const cashierGenerationMiddleware: Middleware = () => {
+export const cashierGenerationMiddleware: Middleware = async () => {
   return (next) => (action: PayloadAction) => {
     if (action.type === timeStarted.type) {
-      const cashiers = engineClient.generateCashiers();
+      const cashiers = await engineClient.generateCashiers();
       engineClient.assignCashiersToLines();
       store.dispatch(cashiersGenerated(cashiers));
     }
@@ -79,12 +79,12 @@ export const addCustomerToLineMiddleware: Middleware = ({ getState }) => {
   };
 };
 
-export const serveCustomerMiddleware: Middleware = ({}) => {
+export const serveCustomerMiddleware: Middleware = async ({ }) => {
   return (next) => (action: PayloadAction<number>) => {
     if (action.type === timeElapsed.type) {
       const lines = lineClient.list();
       lines.forEach((line) => {
-        const cashier = cashierClient.get(line.cashierId!);
+        const cashier = await cashierClient.get(line.cashierId!);
         if (cashier) {
           const cashierId = cashier.id;
           const lineId = line.id;
@@ -113,7 +113,7 @@ export const serveCustomerMiddleware: Middleware = ({}) => {
   };
 };
 
-export const angryCustomerMiddleware: Middleware = ({}) => {
+export const angryCustomerMiddleware: Middleware = ({ }) => {
   return (next) => (action: PayloadAction<number>) => {
     if (action.type === timeElapsed.type) {
       const lines = lineClient.list();

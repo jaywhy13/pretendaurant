@@ -8,11 +8,11 @@ export type RemoteCashierProperties = Omit<Partial<RemoteCashier>, "id">;
 export class CashierClient {
   REMOTE_CASHIER_DATA: RemoteCashier[] = [];
 
-  public list(): Cashier[] {
+  public async list(): Promise<Cashier[]> {
     return this.REMOTE_CASHIER_DATA.map((remoteCashier) => this.toLocalCashier(remoteCashier));
   }
 
-  public create(speed: number): Cashier {
+  public async create(speed: number): Promise<Cashier> {
     const cashier: RemoteCashier = {
       id: uuidv4(),
       speed,
@@ -21,11 +21,13 @@ export class CashierClient {
     return this.toLocalCashier(cashier);
   }
 
-  public get(id: string): Cashier | undefined {
+  public async get(id: string): Promise<Cashier | undefined> {
+    console.log("remote cashier data for get", this.REMOTE_CASHIER_DATA);
     const remoteCashier = this.REMOTE_CASHIER_DATA.find(
       (candidateCashier) => candidateCashier.id === id
     );
     if (remoteCashier) {
+      console.log("remote cashier data after get", remoteCashier);
       return this.toLocalCashier(remoteCashier);
     }
   }
@@ -39,22 +41,25 @@ export class CashierClient {
     }
   }
 
-  public update(id: string, properties: CashierProperties): Cashier | undefined {
+  public async update(id: string, properties: CashierProperties): Promise<Cashier | undefined> {
     const remoteCashier = this.updateRemote(id, { ...properties });
     return remoteCashier ? this.toLocalCashier(remoteCashier) : undefined;
   }
 
   private updateRemote(id: string, properties: RemoteCashierProperties): RemoteCashier | undefined {
+    console.log("remote cashier data", this.REMOTE_CASHIER_DATA);
     const index = this.REMOTE_CASHIER_DATA.findIndex(
       (candidateCashier) => candidateCashier.id === id
     );
     if (index >= 0) {
       const remoteCashier = this.REMOTE_CASHIER_DATA[index];
-      this.REMOTE_CASHIER_DATA[index] = {
+      const updatedCashier = {
         ...remoteCashier,
         ...properties,
-      };
-      return this.toLocalCashier(remoteCashier);
+      }
+      this.REMOTE_CASHIER_DATA[index] = updatedCashier
+      console.log("remote cashier data after update", this.REMOTE_CASHIER_DATA);
+      return this.toLocalCashier(updatedCashier);
     }
   }
 

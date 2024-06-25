@@ -52,17 +52,19 @@ export class EngineClient {
     this.clockClient = clockClient;
     this.options = options;
 
-    this.clockClient.addOnTickCallback((timeElapsed: number) => {
-      this.processTick(timeElapsed);
+    this.clockClient.addOnTickCallback(async (timeElapsed: number) => {
+      await this.processTick(timeElapsed);
     });
   }
 
-  private processTick(timeElapsed: number) {
+  private async processTick(timeElapsed: number) {
     const { numberOfTicksBetweenCustomerGeneration, numberOfCustomersToGenerate } = this.options;
     if (timeElapsed === 0) {
+      console.log("Processing tick for timeElapsed", timeElapsed);
       this.generateLines();
-      this.generateCashiers();
-      this.assignCashiersToLines();
+      await this.generateCashiers();
+      await this.assignCashiersToLines();
+      console.log("Finished processing tick for timeElapsed", timeElapsed)
     } else if (timeElapsed % numberOfTicksBetweenCustomerGeneration === 0) {
       this.generateCustomers(numberOfCustomersToGenerate);
     }
@@ -76,26 +78,27 @@ export class EngineClient {
     return lines;
   }
 
-  public generateCashiers(): Cashier[] {
+  public async generateCashiers(): Promise<Cashier[]> {
     const { numberOfCashiers } = this.options;
     const cashiers: Cashier[] = [];
     for (let i = 0; i < numberOfCashiers; i++) {
       let speed = 1 + parseInt((Math.random() * 10).toString());
-      cashiers.push(this.cashierClient.create(speed));
+      cashiers.push(await this.cashierClient.create(speed));
     }
     return cashiers;
   }
 
-  public assignCashiersToLines() {
-    const cashiers = this.cashierClient.list();
-    cashiers.forEach((cashier) => {
+  public async assignCashiersToLines() {
+    const cashiers = await this.cashierClient.list();
+    for (let i = 0; i < cashiers.length; i++) {
+      let cashier = cashiers[i];
       const lines = this.lineClient.getLinesWithoutCashiers();
-      if (lines.length === 0) {
+      if (lines.length > 0) {
         const line = lines[0];
         console.log(`Assigning cashier ${cashier.id} to line ${line.id}`);
         this.lineClient.addCashierToLine(line.id, cashier.id);
       }
-    });
+    }
   }
 
   public generateCustomers(numberOfCustomers: number): Customer[] {

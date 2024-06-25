@@ -1,4 +1,4 @@
-export type OnTickCallback = (timeElapsed: number) => void;
+export type OnTickCallback = (timeElapsed: number) => Promise<void>;
 
 export class ClockClient {
   private timeElapsed: number | undefined;
@@ -9,11 +9,11 @@ export class ClockClient {
     this.tickRateMs = tickRateMs;
   }
 
-  public start() {
-    this.tick();
+  public async start() {
+    await this.tick();
 
-    setInterval(() => {
-      this.tick();
+    setInterval(async () => {
+      await this.tick();
     }, this.tickRateMs);
   }
 
@@ -25,16 +25,17 @@ export class ClockClient {
     this.tickRateMs = tickRateMs;
   }
 
-  private tick() {
+  private async tick() {
     if (this.timeElapsed === undefined) {
       this.timeElapsed = 0;
     } else {
       this.timeElapsed += 1;
     }
 
-    this.onTickCallbacks.forEach((callback) => {
-      callback(this.timeElapsed!);
-    });
+    for (let i = 0; i < this.onTickCallbacks.length; i++) {
+      let callback = this.onTickCallbacks[i];
+      await callback(this.timeElapsed!);
+    }
   }
 
   public getTimeElapsed(): number {

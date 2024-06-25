@@ -10,25 +10,25 @@ describe("Clock", () => {
   });
 
   describe("start", () => {
-    it("should call the provided callback after a tick", () => {
+    it("should call the provided callback after a tick", async () => {
       const callback = jest.fn();
       expect(callback).not.toHaveBeenCalled();
 
       clockClient.addOnTickCallback(callback);
-      clockClient.start();
+      await clockClient.start();
 
       advanceClockByTicks(clockClient, 1);
 
       expect(callback).toHaveBeenCalled();
     });
 
-    it("should call the provided callback for subsequent ticks", () => {
+    it("should call the provided callback for subsequent ticks", async () => {
       const callback = jest.fn();
       expect(callback).not.toHaveBeenCalled();
 
       clockClient.addOnTickCallback(callback);
 
-      clockClient.start();
+      await clockClient.start();
       expect(callback).toHaveBeenCalledTimes(1);
 
       advanceClockByTicks(clockClient, 1);

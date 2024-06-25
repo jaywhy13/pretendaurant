@@ -2,11 +2,11 @@ import { clockClient } from "../../clients/Clock";
 import store from "../../store";
 import { timeStarted as timeStartedAction, timeElapsed as timeElapsedAction } from "./clockSlice";
 
-export const startClock = () => {
+export const startClock = async () => {
   store.dispatch(timeStartedAction());
-  clockClient.start();
+  await clockClient.start();
 
-  clockClient.addOnTickCallback((timeElapsed: number) => {
+  clockClient.addOnTickCallback(async (timeElapsed: number) => {
     store.dispatch(timeElapsedAction(timeElapsed));
   });
 };
