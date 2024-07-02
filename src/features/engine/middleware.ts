@@ -44,14 +44,15 @@ export const lineGenerationMiddleware: Middleware = ({ }) => {
   };
 };
 
-export const cashierGenerationMiddleware: Middleware = async () => {
+export const cashierGenerationMiddleware: Middleware = () => {
   return (next) => (action: PayloadAction) => {
     if (action.type === timeStarted.type) {
-      const cashiers = await engineClient.generateCashiers();
-      engineClient.assignCashiersToLines();
-      store.dispatch(cashiersGenerated(cashiers));
+      engineClient.generateCashiers().then((cashiers) => {
+        engineClient.assignCashiersToLines();
+        store.dispatch(cashiersGenerated(cashiers));
+        return next(action);
+      });
     }
-    return next(action);
   };
 };
 
@@ -79,11 +80,12 @@ export const addCustomerToLineMiddleware: Middleware = ({ getState }) => {
   };
 };
 
-export const serveCustomerMiddleware: Middleware = async ({ }) => {
-  return (next) => (action: PayloadAction<number>) => {
+export const serveCustomerMiddleware: Middleware = ({ }) => {
+  return (next) => async (action: PayloadAction<number>) => {
     if (action.type === timeElapsed.type) {
       const lines = lineClient.list();
-      lines.forEach((line) => {
+
+      lines.forEach(async (line) => {
         const cashier = await cashierClient.get(line.cashierId!);
         if (cashier) {
           const cashierId = cashier.id;
@@ -114,7 +116,7 @@ export const serveCustomerMiddleware: Middleware = async ({ }) => {
 };
 
 export const angryCustomerMiddleware: Middleware = ({ }) => {
-  return (next) => (action: PayloadAction<number>) => {
+  return (next) => async (action: PayloadAction<number>) => {
     if (action.type === timeElapsed.type) {
       const lines = lineClient.list();
       lines.forEach((line) => {
