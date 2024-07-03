@@ -1,29 +1,37 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import "./App.css";
-import { Clock } from "./components/Clock";
-import { CustomerInLine } from "./components/CustomerInLine";
-import { selectLines } from "./features/restaurant/selectors";
-import { CustomerInLine as LocalCustomerInLine } from "./types";
+import { CashierClient } from "./clients/Cashier";
+import { ClockClient } from "./clients/Clock";
+import { CustomerClient } from "./clients/Customer";
+import { EngineClient, EngineOptions } from "./clients/Engine";
+import { LineClient } from "./clients/Line";
+import { QueueClient } from "./clients/Queue";
+import RestaurantComponent from "./components/RestaurantComponent";
 
 function App() {
-  const lines = useSelector(selectLines);
+  const clockClient = new ClockClient();
+  const customerClient = new CustomerClient();
+  const lineClient = new LineClient(customerClient);
+  const cashierClient = new CashierClient();
+  const queueClient = new QueueClient();
+  const options: EngineOptions = {
+    numberOfLines: 4,
+    numberOfCashiers: 4,
+    numberOfCustomersToGenerate: 2,
+    numberOfTicksBetweenCustomerGeneration: 4,
+  };
+  const engineClient = new EngineClient({
+    lineClient,
+    customerClient,
+    cashierClient,
+    clockClient,
+    queueClient,
+    options,
+  });
 
   return (
     <div className="App">
-      <Clock />
-      Everything will go here
-      <div>
-        Lines
-        {lines.map((line) => (
-          <div key={line.id}>
-            <b>line {line.id}</b>
-            {line.cashierId ? <span> w/ cashier - {line.cashierId}</span> : null}
-            {line.customersInLine.map(({ customer: { id } }) => (
-              <CustomerInLine customerId={id} key={id} />
-            ))}
-          </div>
-        ))}
-      </div>
+      <RestaurantComponent clockClient={clockClient} lineClient={lineClient} />
     </div>
   );
 }

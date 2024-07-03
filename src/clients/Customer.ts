@@ -1,9 +1,12 @@
 import { RemoteCustomer } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { Customer } from "../types";
+import { faker } from '@faker-js/faker';
+faker.seed(123);
 
 type RemoteCustomerParameters = Omit<Partial<RemoteCustomer>, "id">;
 type CustomerParameters = Omit<Partial<Customer>, "id">;
+
 
 export class CustomerClient {
   REMOTE_CUSTOMER_DATA: RemoteCustomer[] = [];
@@ -27,8 +30,10 @@ export class CustomerClient {
     const customer: RemoteCustomer = {
       id: uuidv4(),
       patience: params.patience!,
+      name: faker.person.firstName(),
     };
     this.REMOTE_CUSTOMER_DATA.push(customer);
+    console.log("Customer created", this.REMOTE_CUSTOMER_DATA, this, toString())
     return this.toLocalCustomer(customer);
   }
 
@@ -56,4 +61,3 @@ export class CustomerClient {
   }
 }
 
-export const customerClient = new CustomerClient();
