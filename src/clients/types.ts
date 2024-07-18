@@ -1,6 +1,7 @@
 export interface RemoteCustomer {
   id: string;
   patience: number;
+  name: string;
 }
 
 export interface RemoteCashier {

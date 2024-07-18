@@ -1,5 +1,5 @@
 import { CustomerInLine, Line } from "../types";
-import { customerClient, CustomerClient } from "./Customer";
+import { CustomerClient } from "./Customer";
 import { RemoteCustomerInLine, RemoteLine } from "./types";
 
 export type LineParameters = Omit<Partial<Line>, "id">;
@@ -120,9 +120,12 @@ export class LineClient {
 
   public addCustomerToLine(lineId: string, customerId: string): CustomerInLine {
     const remoteCustomer = this.customerClient.getRemote(customerId);
+    if (remoteCustomer === undefined) {
+      throw new Error(`Customer with id ${customerId} not found`);
+    }
     const remoteCustomerInLine = {
       lineId,
-      customer: remoteCustomer!,
+      customer: remoteCustomer,
       joinedAt: new Date().getTime(),
     };
     this.REMOTE_CUSTOMERS_IN_LINE.push(remoteCustomerInLine);
@@ -201,9 +204,9 @@ export class LineClient {
     const localCustomer = {
       id: remoteCustomerInLine.customer.id,
       patience: remoteCustomerInLine.customer.patience,
+      name: remoteCustomerInLine.customer.name,
     };
     return { lineId: remoteCustomerInLine.lineId, customer: localCustomer };
   }
 }
 
-export const lineClient = new LineClient(customerClient);

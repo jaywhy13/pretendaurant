@@ -21,4 +21,3 @@ export class QueueClient {
   }
 }
 
-export const queueClient = new QueueClient();

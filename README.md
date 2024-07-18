@@ -41,7 +41,23 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
     -   Having issues trying to implement async Redux middleware.
     -   First... what's a middlewae and how is that different from a thunk?
     -   Actually, before that I need to let the cashier middleware work async
-- [ ] 1.8 - Implement push layer for publishing changes to the underlying models.
+- [x] Remove redux
+    Redux is too complicated and learning it isn't very valuable for me. I need to work with a simpler
+    - [x] Create Restaurant component
+    - [x] Move startClock logic to the Restaurant component
+    - [x] Add some logic to refresh the state from the clients (just added a basic refresh for now)
+    - [x] Convert slices to plain React state
+        - [x] Convert the clock slice to plain React state
+        - [x] Convert the engline slice to plain React state
+        - [x] Convert the restaurant slice to plain React state
+    - [x] Convert middleware to plain React state
+
+    - [ ] Figure out how to replace React dispatch functionality
+    - [x] Get rid of selectors
+    - [x] Remove the Provider from index.ts
+    - [x] Remove Store
+    - [x] Remove Redux tooling from packages
+ [ ] 1.8 - Implement push layer for publishing changes to the underlying models.
 - [ ] 1.9 - Remove business logic from the middleware layer. Perhaps the middleware should only trigger the engine, and the engine should determine what happens.
 - [ ] 1.10 - Move selectors into the slice.
 
@@ -56,3 +72,4 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
 - I was thinking of changing the calls between services and clients. The service is meant to be local abstraction over the underlying client. I'm not sure about the value the "service" abstraction provides though. The client currently does a great job of abstracting the underlying mechanism for retrieving data on customers, cashiers, etc... Do we need a service layer? If we're keeping the client layer and ditching the service layer, it needs to return local types, instead of remote ones. This will make the client's internal mechanisms fungible.
 - We're always flying blind without tests. After writing the tests I was able to catch a few bugs:
     - In the `CashierClient` I was storing the mapping outside of the class, so there was actually _one_ global store for all cashiers, instead of one per instance of the class.
+- Use tooling only when necessary. Adding Redux at the start was HUGE OVERKILL. Adding Redux Toolkit at the start was even worse! For such a simple app, we don't need something as complex as Redux. When we inherit the complexity, we can re-evaluate whether we need it.

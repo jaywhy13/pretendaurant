@@ -50,4 +50,3 @@ export class ClockClient {
   }
 }
 
-export const clockClient = new ClockClient();

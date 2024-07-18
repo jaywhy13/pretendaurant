@@ -6,6 +6,7 @@ export interface Cashier {
 export interface Customer {
   id: string;
   patience: number;
+  name: string;
 }
 
 export interface Line {

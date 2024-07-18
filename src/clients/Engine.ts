@@ -1,9 +1,9 @@
-import { customerClient, CustomerClient } from "../clients/Customer";
-import { lineClient, LineClient } from "../clients/Line";
+import { CustomerClient } from "../clients/Customer";
+import { LineClient, LineOrderBy } from "../clients/Line";
 import { Cashier, Customer, Line } from "../types";
-import { cashierClient, CashierClient } from "../clients/Cashier";
-import { clockClient, ClockClient } from "../clients/Clock";
-import { queueClient, QueueClient } from "../clients/Queue";
+import { CashierClient } from "../clients/Cashier";
+import { ClockClient } from "../clients/Clock";
+import { QueueClient } from "../clients/Queue";
 
 export interface EngineOptions {
   numberOfLines: number;
@@ -29,6 +29,7 @@ export class EngineClient {
   private cashierClient: CashierClient;
   private clockClient: ClockClient;
   private options: EngineOptions;
+  private initialized: boolean;
 
   constructor({
     lineClient,
@@ -51,6 +52,7 @@ export class EngineClient {
     this.queueClient = queueClient;
     this.clockClient = clockClient;
     this.options = options;
+    this.initialized = false;
 
     this.clockClient.addOnTickCallback(async (timeElapsed: number) => {
       await this.processTick(timeElapsed);
@@ -102,6 +104,26 @@ export class EngineClient {
     }
   }
 
+  public async assignCustomersToLines(numberOfCustomers: number = 1) {
+    const customerIdsInQueue = this.queueClient.list();
+    if (customerIdsInQueue.length === 0) {
+      console.log("No customers in queue")
+      return;
+    }
+
+    const customersIdsToAssign = customerIdsInQueue.slice(0, numberOfCustomers);
+    for (let i = 0; i < customersIdsToAssign.length; i++) {
+      const customerId = customersIdsToAssign[i];
+      const lines = this.lineClient.list({ orderBy: LineOrderBy.CUSTOMERS_IN_LINE });
+      const line = lines.length > 0 ? lines[0] : null;
+      if (line !== null) {
+        console.log(`Assigning customer ${customerId} to line ${line.id}`);
+        this.lineClient.addCustomerToLine(line.id, customerId);
+        this.queueClient.removeCustomer(customerId);
+      }
+    }
+  }
+
   public generateCustomers(numberOfCustomers: number): Customer[] {
     console.log(`Generating ${numberOfCustomers} customers`);
     const customers: Customer[] = [];
@@ -117,17 +139,3 @@ export class EngineClient {
   }
 }
 
-const options: EngineOptions = {
-  numberOfLines: 4,
-  numberOfCashiers: 4,
-  numberOfCustomersToGenerate: 2,
-  numberOfTicksBetweenCustomerGeneration: 4,
-};
-export const engineClient = new EngineClient({
-  lineClient,
-  customerClient,
-  cashierClient,
-  clockClient,
-  queueClient,
-  options,
-});

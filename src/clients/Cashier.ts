@@ -70,4 +70,3 @@ export class CashierClient {
   }
 }
 
-export const cashierClient = new CashierClient();
