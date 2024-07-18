@@ -24,7 +24,7 @@ describe("Engine", () => {
   beforeEach(() => {
     customerClient = new CustomerClient();
     cashierClient = new CashierClient();
-    lineClient = new LineClient();
+    lineClient = new LineClient(customerClient);
     clockClient = new ClockClient();
     queueClient = new QueueClient();
   });

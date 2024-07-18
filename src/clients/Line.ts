@@ -37,8 +37,8 @@ export class LineClient {
   private REMOTE_CUSTOMERS_IN_LINE: RemoteCustomerInLine[] = [];
   private customerClient: CustomerClient;
 
-  public constructor(customerClient?: CustomerClient) {
-    this.customerClient = customerClient || new CustomerClient();
+  public constructor(customerClient: CustomerClient) {
+    this.customerClient = customerClient;
   }
 
   public list(listArguments?: ListArguments): Line[] {
