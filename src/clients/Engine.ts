@@ -67,6 +67,7 @@ export class EngineClient {
       console.log("Finished processing tick for timeElapsed", timeElapsed)
     } else if (timeElapsed % numberOfTicksBetweenCustomerGeneration === 0) {
       this.generateCustomers(numberOfCustomersToGenerate);
+      await this.assignCustomersToLines(1);
     }
   }
 
