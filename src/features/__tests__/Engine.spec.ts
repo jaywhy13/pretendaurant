@@ -19,6 +19,7 @@ describe("Engine", () => {
     numberOfLines: 4,
     numberOfCustomersToGenerate: 1,
     numberOfTicksBetweenCustomerGeneration: 1,
+    numberOfTicksBetweenAssigningCustomersToLines: 1,
   };
 
   beforeEach(() => {
@@ -58,7 +59,6 @@ describe("Engine", () => {
       await clockClient.start();
 
       const cashiers = await cashierClient.list();
-      console.log("Checking the list of cachiers", cashiers)
       expect(cashiers).toHaveLength(4);
     });
 
@@ -69,13 +69,13 @@ describe("Engine", () => {
       await clockClient.start();
 
       const linesWithoutCashiers = lineClient.list({ filters: { cashierId: undefined } });
-      console.log("Checking the list of lines without cashiers", linesWithoutCashiers)
       expect(linesWithoutCashiers).toHaveLength(0);
     });
 
     it("generates customers at the prescribed rate", async () => {
       options = {
         ...defaultOptions,
+        // Generate 1 customer after each tick
         numberOfCustomersToGenerate: 1,
         numberOfTicksBetweenCustomerGeneration: 1,
       };
@@ -93,5 +93,57 @@ describe("Engine", () => {
 
       expect(customerClient.list()).toHaveLength(2);
     });
+
+    it('assigns customers to the lines', async () => {
+      options = {
+        ...defaultOptions,
+        // Generate 1 customer to be added to one line
+        numberOfLines: 1,
+        numberOfCustomersToGenerate: 1,
+        // Generate 1 customer after each tick
+        numberOfTicksBetweenCustomerGeneration: 1,
+      };
+      engine = new EngineClient({ lineClient, customerClient, cashierClient, clockClient, queueClient, options });
+
+      await clockClient.start();
+
+      // This should assign customers to the lines
+      advanceClockByTicks(clockClient, 1);
+
+      const line = lineClient.list()[0];
+      const customer = customerClient.list()[0];
+      const customersInLine = lineClient.getCustomersInLine(line.id);
+
+      expect(customersInLine).toHaveLength(1);
+      expect(customersInLine[0].customer.id).toEqual(customer.id);
+
+    });
+
+    it.only('removes customers from the quueue', async () => {
+
+      options = {
+        ...defaultOptions,
+        // Generate 1 customer to be added to one line
+        numberOfLines: 1,
+        numberOfCustomersToGenerate: 1,
+        // Generate 1 customer after each tick
+        numberOfTicksBetweenCustomerGeneration: 1,
+      };
+      engine = new EngineClient({ lineClient, customerClient, cashierClient, clockClient, queueClient, options });
+
+      await clockClient.start();
+
+      expect(queueClient.list()).toHaveLength(0);
+      expect(customerClient.list()).toHaveLength(0);
+
+      // This should assign customers to the lines
+      advanceClockByTicks(clockClient, 1);
+
+      expect(queueClient.list()).toHaveLength(0);
+
+    });
+
+
+
   });
 });

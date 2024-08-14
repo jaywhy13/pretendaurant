@@ -19,6 +19,7 @@ function App() {
     numberOfCashiers: 4,
     numberOfCustomersToGenerate: 2,
     numberOfTicksBetweenCustomerGeneration: 4,
+    numberOfTicksBetweenAssigningCustomersToLines: 4,
   };
   const engineClient = new EngineClient({
     lineClient,

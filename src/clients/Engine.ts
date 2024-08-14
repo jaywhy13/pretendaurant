@@ -11,6 +11,7 @@ export interface EngineOptions {
   // Customer generation
   numberOfCustomersToGenerate: number;
   numberOfTicksBetweenCustomerGeneration: number;
+  numberOfTicksBetweenAssigningCustomersToLines: number;
 }
 
 /**
@@ -60,17 +61,22 @@ export class EngineClient {
   }
 
   private async processTick(timeElapsed: number) {
-    const { numberOfTicksBetweenCustomerGeneration, numberOfCustomersToGenerate } = this.options;
+    const { numberOfTicksBetweenCustomerGeneration, numberOfCustomersToGenerate, numberOfTicksBetweenAssigningCustomersToLines } = this.options;
+    console.log("Processing tick for timeElapsed", timeElapsed);
     if (timeElapsed === 0) {
-      console.log("Processing tick for timeElapsed", timeElapsed);
       this.generateLines();
       await this.generateCashiers();
       await this.assignCashiersToLines();
-      console.log("Finished processing tick for timeElapsed", timeElapsed)
-    } else if (timeElapsed % numberOfTicksBetweenCustomerGeneration === 0) {
+    }
+    if (timeElapsed >= numberOfTicksBetweenCustomerGeneration && timeElapsed % numberOfTicksBetweenCustomerGeneration === 0) {
+      console.log("Generating customers for timeElapsed", timeElapsed, "numberOfCustomersToGenerate", numberOfCustomersToGenerate);
       this.generateCustomers(numberOfCustomersToGenerate);
+    }
+
+    if (timeElapsed >= numberOfTicksBetweenAssigningCustomersToLines && timeElapsed % numberOfTicksBetweenAssigningCustomersToLines === 0) {
       await this.assignCustomersToLines(1);
     }
+    console.log("Finished processing tick for timeElapsed", timeElapsed)
   }
 
   public generateLines(): Line[] {
