@@ -21,6 +21,10 @@ export class ClockClient {
     this.onTickCallbacks.push(onTickCallback);
   }
 
+  public clearOnTickCallbacks() {
+    this.onTickCallbacks = [];
+  }
+
   public setTickRate(tickRateMs: number) {
     this.tickRateMs = tickRateMs;
   }

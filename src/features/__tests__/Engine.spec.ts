@@ -29,6 +29,17 @@ describe("Engine", () => {
     queueClient = new QueueClient();
   });
 
+  afterEach(() => {
+    // Remove callbacks before the test flushes timers
+    // After the test is finishedm, it flushes all the 
+    // timers, which would call our callback and cause
+    // confusion and test failures.
+    // Using this manual method until we find a better way
+    if (clockClient) {
+      clockClient.clearOnTickCallbacks();
+    }
+  });
+
   describe("generation", () => {
     it("generates lines at the start", async () => {
       options = { ...defaultOptions, numberOfLines: 4 };
