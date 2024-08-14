@@ -4,43 +4,17 @@ A pretend-restaurant that's on its way to using Reinforcement Learning to manage
 
 I'm doing more detailed documentation on the project itself [here](./docs/developer.md).
 
-## Requirements
+## Todos
 
-### Phase 1
-
-- [x] The restaurant should see a random set of customers coming in consistenly throughout the day.
-- [x] Customers should join the emptiest line.
-- [x] Cashiers should serve customers at the front of the line. After customers are served they should leave. Cashiers can serve `speed` number of customers for each unit of time.
-- [x] Customers should leave the restaurant `patience` units of time after joining the line if they are not served.
-- [ ] The manager should make the following decisions using a random selection algorithm:
-    - [ ] Nothing
-    - [ ] Change a cashier
-- [ ] The following formula should be used to calculate the manager score:
-    - 100 - percentage of angry customers - percentage of abandoned customers (minimum of zero)
-- [ ] The manager is given feedback after 20 units of time.
-- [ ] The score should be displayed prominently.
-
-
-### Phase 2
-- [ ] Implement a smarter decision making algorithm based on a poor man's version of Reinforcement Learning.
-- [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
-
-## Changes
-
-### Phase 1
-- [x] 1.1 - Move ID generation to the `LineService`.
-- [x] 1.2 - Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
-- [x] 1.3 - Remove the local service layer abstraction
-- [x] 1.4 - Add tests for the clients
-- [x] 1.5 - Get the application working again
-  - [x] 1.5.1 - Enable listing of customers in the line (add restaurant state for customers in line, populate it when customers are generated)
-  - [x] 1.5.2 - Change `Line` to store the customers in the line.
-  - [x] 1.5.3 - Nested `customer` under `CustomerInLine` object.
-- [x] 1.6 - Separate service interfaces from the ones used by the UI layer.
-- [ ] 1.7 - Make service calls async (cashier, clock). 
-    -   Having issues trying to implement async Redux middleware.
-    -   First... what's a middlewae and how is that different from a thunk?
-    -   Actually, before that I need to let the cashier middleware work async
+- [x] Move ID generation to the `LineService`.
+- [x] Make `LineService` look like an actual service, `addCustomerToLine` takes a line ID.
+- [x] Remove the local service layer abstraction
+- [x] Add tests for the clients
+- [x] Get the application working again
+  - [x] Enable listing of customers in the line (add restaurant state for customers in line, populate it when customers are generated)
+  - [x]  Change `Line` to store the customers in the line.
+  - [x]  Nested `customer` under `CustomerInLine` object.
+- [x] Separate service interfaces from the ones used by the UI layer.
 - [x] Remove redux
     Redux is too complicated and learning it isn't very valuable for me. I need to work with a simpler
     - [x] Create Restaurant component
@@ -51,16 +25,32 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
         - [x] Convert the engline slice to plain React state
         - [x] Convert the restaurant slice to plain React state
     - [x] Convert middleware to plain React state
-
-    - [ ] Figure out how to replace React dispatch functionality
     - [x] Get rid of selectors
     - [x] Remove the Provider from index.ts
     - [x] Remove Store
     - [x] Remove Redux tooling from packages
- [ ] 1.8 - Implement push layer for publishing changes to the underlying models.
-- [ ] 1.9 - Remove business logic from the middleware layer. Perhaps the middleware should only trigger the engine, and the engine should determine what happens.
-- [ ] 1.10 - Move selectors into the slice.
-
+- [x] Add some tests for the engine
+  -  [x] Line generation
+  -  [x] Cashier generation
+  -  [x] Assigning customers to lines
+  -  [x] Remove customers from the queue
+- [ ] Make service calls async. 
+  -  [ ] Customer
+  -  [ ] Engine
+  -  [ ] Fulfillment
+  -  [ ] Line
+  -  [ ] Queue
+- [ ] The manager should make the following decisions using a random selection algorithm:
+    - [ ] Nothing
+    - [ ] Change a cashier
+- [ ] The following formula should be used to calculate the manager score:
+    - 100 - percentage of angry customers - percentage of abandoned customers (minimum of zero)
+- [ ] The manager is given feedback after 20 units of time.
+- [ ] The score should be displayed prominently.
+- [ ] Implement a smarter decision making algorithm based on a poor man's version of Reinforcement Learning.
+- [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
+- [ ] Move clients to a backend service
+- [ ] Implement push layer for publishing changes to the underlying models.
 
 ## Lessons
 
