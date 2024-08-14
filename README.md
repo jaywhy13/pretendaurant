@@ -51,6 +51,7 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
 - [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
 - [ ] Move clients to a backend service
 - [ ] Implement push layer for publishing changes to the underlying models.
+- [ ] Implement a nice abstraction for using the clock that automatically removes listeners when the at test completion. This should avoid the engine processing another tick due to Jest flushing timers
 
 ## Lessons
 
