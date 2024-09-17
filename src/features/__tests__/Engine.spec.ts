@@ -89,11 +89,11 @@ describe("Engine", () => {
 
       expect(await customerClient.list()).toHaveLength(0);
 
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
 
       expect(await customerClient.list()).toHaveLength(1);
 
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
 
       expect(await customerClient.list()).toHaveLength(2);
     });
@@ -112,7 +112,7 @@ describe("Engine", () => {
       await clockClient.start();
 
       // This should assign customers to the lines
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
 
       const line = lineClient.list()[0];
       const customer = (await customerClient.list())[0];
@@ -143,10 +143,8 @@ describe("Engine", () => {
 
       // This should assign customers to the lines
       console.log("Advance the clock by 1 tick")
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
       console.log("Clock advanced by 1 tick")
-
-      // await flushPromises();
 
       console.log("Lets check the queue length now in the test")
 

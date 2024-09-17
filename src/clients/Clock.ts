@@ -30,7 +30,6 @@ export class ClockClient {
   }
 
   private async tick() {
-    console.log("⏰ Tick, will notify", this.onTickCallbacks.length, "callback(s)");
     if (this.timeElapsed === undefined) {
       this.timeElapsed = 0;
     } else {

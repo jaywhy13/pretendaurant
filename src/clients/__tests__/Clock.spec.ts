@@ -17,7 +17,7 @@ describe("Clock", () => {
       clockClient.addOnTickCallback(callback);
       await clockClient.start();
 
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
 
       expect(callback).toHaveBeenCalled();
     });
@@ -31,10 +31,10 @@ describe("Clock", () => {
       await clockClient.start();
       expect(callback).toHaveBeenCalledTimes(1);
 
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
       expect(callback).toHaveBeenCalledTimes(2);
 
-      advanceClockByTicks(clockClient, 1);
+      await advanceClockByTicks(clockClient, 1);
       expect(callback).toHaveBeenCalledTimes(3);
     });
   });
