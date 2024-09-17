@@ -6,11 +6,11 @@
 export class QueueClient {
   QUEUE: string[] = [];
 
-  public addCustomer(customerId: string) {
+  public async addCustomer(customerId: string) {
     this.QUEUE.push(customerId);
   }
 
-  public removeCustomer(customerId: string) {
+  public async removeCustomer(customerId: string) {
     console.log("Removing customer from the queue", customerId);
     this.QUEUE = this.QUEUE.filter(
       (candidateCustomerId: string) => candidateCustomerId !== customerId
@@ -18,7 +18,7 @@ export class QueueClient {
     console.log("See queue after removing customer", this.QUEUE)
   }
 
-  public list(): string[] {
+  public async list(): Promise<string[]> {
     console.log("Listing queue", this.QUEUE)
     return [...this.QUEUE];
   }

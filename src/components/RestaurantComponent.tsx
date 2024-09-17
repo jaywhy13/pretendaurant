@@ -33,7 +33,7 @@ export const Restaurant: React.FC<IProps> = ({ clockClient, lineClient }) => {
   }
 
   const handleRefreshData = async () => {
-    const lines = lineClient.list();
+    const lines = await lineClient.list();
     setRestaurant({ lines, })
   }
 

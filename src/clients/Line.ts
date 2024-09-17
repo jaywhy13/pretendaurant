@@ -41,7 +41,7 @@ export class LineClient {
     this.customerClient = customerClient;
   }
 
-  public list(listArguments?: ListArguments): Line[] {
+  public async list(listArguments?: ListArguments): Promise<Line[]> {
     let lines = this.REMOTE_LINES.map((line) => {
       const remoteCustomersInLine = this.getRemoteCustomersInLine(line.id);
       return this.toLocalLine(line, remoteCustomersInLine);
@@ -71,7 +71,7 @@ export class LineClient {
     return lines;
   }
 
-  public get(id: string): Line | undefined {
+  public async get(id: string): Promise<Line | undefined> {
     const remoteLine = this.REMOTE_LINES.find((candidateLine) => candidateLine.id === id);
     const remoteCustomersInLine = this.getRemoteCustomersInLine(id);
 
@@ -80,7 +80,7 @@ export class LineClient {
     }
   }
 
-  public create(params: LineParameters): Line {
+  public async create(params: LineParameters): Promise<Line> {
     const id = this.REMOTE_LINES.length.toString();
     const { cashierId } = params;
     const remoteLine: RemoteLine = {
@@ -134,7 +134,7 @@ export class LineClient {
     return this.toLocalCustomerInLine(remoteCustomerInLine);
   }
 
-  public removeCustomerFromLine(lineId: string, customerId: string) {
+  public async removeCustomerFromLine(lineId: string, customerId: string) {
     const index = this.REMOTE_CUSTOMERS_IN_LINE.findIndex(
       (remoteCustomerInLine) =>
         remoteCustomerInLine.customer?.id === customerId && remoteCustomerInLine.lineId === lineId
@@ -144,13 +144,13 @@ export class LineClient {
     }
   }
 
-  public getCustomersInLine(lineId: string): CustomerInLine[] {
+  public async getCustomersInLine(lineId: string): Promise<CustomerInLine[]> {
     return this.REMOTE_CUSTOMERS_IN_LINE.filter(
       (remoteCustomerInLine) => remoteCustomerInLine.lineId === lineId
     ).map((remoteCustomerInLine) => this.toLocalCustomerInLine(remoteCustomerInLine));
   }
 
-  public addCashierToLine(lineId: string, cashierId: string): Line | undefined {
+  public async addCashierToLine(lineId: string, cashierId: string): Promise<Line | undefined> {
     const remoteLine = this.getRemote(lineId);
     if (remoteLine) {
       const updatedRemoteLine = this.updateRemote(lineId, { cashierId });
@@ -159,7 +159,7 @@ export class LineClient {
     }
   }
 
-  public removeCashierFromLine(lineId: string, cashierId: string): Line | undefined {
+  public async removeCashierFromLine(lineId: string, cashierId: string): Promise<Line | undefined> {
     const remoteLine = this.getRemote(lineId);
     if (remoteLine && remoteLine.cashierId === cashierId) {
       const updatedRemoteLine = this.updateRemote(lineId, { cashierId: undefined });
@@ -168,14 +168,14 @@ export class LineClient {
     }
   }
 
-  public getLinesWithoutCashiers(): Line[] {
+  public async getLinesWithoutCashiers(): Promise<Line[]> {
     return this.REMOTE_LINES.filter((line) => line.cashierId === undefined).map((remoteLine) => {
       const remoteCustomersInLine = this.getRemoteCustomersInLine(remoteLine.id);
       return this.toLocalLine(remoteLine, remoteCustomersInLine);
     });
   }
 
-  public getEmptiestLine(): Line | undefined {
+  public async getEmptiestLine(): Promise<Line | undefined> {
     let emptiestLine: Line | undefined;
     let smallestLineLength = Number.MAX_SAFE_INTEGER;
     this.REMOTE_LINES.forEach((remoteLine) => {

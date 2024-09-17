@@ -8,15 +8,15 @@ describe("Fulfillment Client", () => {
     fulfillmentClient = new FulfillmentClient();
   });
 
-  it("records served customers", () => {
+  it("records served customers", async () => {
     const customerId = uuidv4();
     const lineId = uuidv4();
     const cashierId = uuidv4();
     const duration = 10;
 
-    fulfillmentClient.serveCustomer({ lineId, customerId, cashierId, duration });
+    await fulfillmentClient.serveCustomer({ lineId, customerId, cashierId, duration });
 
-    const fulfillments = fulfillmentClient.list(lineId, customerId);
+    const fulfillments = await fulfillmentClient.list(lineId, customerId);
 
     expect(fulfillments.length).toEqual(1);
 

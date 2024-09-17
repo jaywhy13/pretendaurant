@@ -64,13 +64,13 @@ export class EngineClient {
     const { numberOfTicksBetweenCustomerGeneration, numberOfCustomersToGenerate, numberOfTicksBetweenAssigningCustomersToLines } = this.options;
     console.log("Processing tick for timeElapsed", timeElapsed);
     if (timeElapsed === 0) {
-      this.generateLines();
+      await this.generateLines();
       await this.generateCashiers();
       await this.assignCashiersToLines();
     }
     if (timeElapsed >= numberOfTicksBetweenCustomerGeneration && timeElapsed % numberOfTicksBetweenCustomerGeneration === 0) {
       console.log("Generating customers for timeElapsed", timeElapsed, "numberOfCustomersToGenerate", numberOfCustomersToGenerate);
-      this.generateCustomers(numberOfCustomersToGenerate);
+      await this.generateCustomers(numberOfCustomersToGenerate);
     }
 
     if (timeElapsed >= numberOfTicksBetweenAssigningCustomersToLines && timeElapsed % numberOfTicksBetweenAssigningCustomersToLines === 0) {
@@ -79,10 +79,11 @@ export class EngineClient {
     console.log("Finished processing tick for timeElapsed", timeElapsed)
   }
 
-  public generateLines(): Line[] {
+  public async generateLines(): Promise<Line[]> {
     const lines: Line[] = [];
     for (let i = 0; i < this.options.numberOfLines; i++) {
-      lines.push(this.lineClient.create({}));
+      const line = await this.lineClient.create({});
+      lines.push(line);
     }
     return lines;
   }
@@ -101,17 +102,17 @@ export class EngineClient {
     const cashiers = await this.cashierClient.list();
     for (let i = 0; i < cashiers.length; i++) {
       let cashier = cashiers[i];
-      const lines = this.lineClient.getLinesWithoutCashiers();
+      const lines = await this.lineClient.getLinesWithoutCashiers();
       if (lines.length > 0) {
         const line = lines[0];
         console.log(`Assigning cashier ${cashier.id} to line ${line.id}`);
-        this.lineClient.addCashierToLine(line.id, cashier.id);
+        await this.lineClient.addCashierToLine(line.id, cashier.id);
       }
     }
   }
 
   public async assignCustomersToLines(numberOfCustomers: number = 1) {
-    const customerIdsInQueue = this.queueClient.list();
+    const customerIdsInQueue = await this.queueClient.list();
     if (customerIdsInQueue.length === 0) {
       console.log("No customers in queue")
       return;
@@ -120,7 +121,7 @@ export class EngineClient {
     const customersIdsToAssign = customerIdsInQueue.slice(0, numberOfCustomers);
     for (let i = 0; i < customersIdsToAssign.length; i++) {
       const customerId = customersIdsToAssign[i];
-      const lines = this.lineClient.list({ orderBy: LineOrderBy.CUSTOMERS_IN_LINE });
+      const lines = await this.lineClient.list({ orderBy: LineOrderBy.CUSTOMERS_IN_LINE });
       const line = lines.length > 0 ? lines[0] : null;
       if (line !== null) {
         console.log(`Assigning customer ${customerId} to line ${line.id}`);
@@ -130,21 +131,21 @@ export class EngineClient {
         // in our test
         // We need a way to immediately run the microtask queue
         console.log(`Removing customer from the queue`)
-        this.queueClient.removeCustomer(customerId);
+        await this.queueClient.removeCustomer(customerId);
       }
     }
   }
 
-  public generateCustomers(numberOfCustomers: number): Customer[] {
+  public async generateCustomers(numberOfCustomers: number): Promise<Customer[]> {
     console.log(`Generating ${numberOfCustomers} customers`);
     const customers: Customer[] = [];
 
     for (let i = 0; i < numberOfCustomers; i++) {
-      const customer = this.customerClient.create({
+      const customer = await this.customerClient.create({
         patience: 10 + Math.floor(Math.random() * 50),
       });
       customers.push(customer);
-      this.queueClient.addCustomer(customer.id);
+      await this.queueClient.addCustomer(customer.id);
     }
     return customers;
   }

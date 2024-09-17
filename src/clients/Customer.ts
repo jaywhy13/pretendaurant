@@ -29,7 +29,7 @@ export class CustomerClient {
     return result;
   }
 
-  public create(params: CustomerParameters): Customer {
+  public async create(params: CustomerParameters): Promise<Customer> {
     const customer: RemoteCustomer = {
       id: uuidv4(),
       patience: params.patience!,
@@ -52,7 +52,7 @@ export class CustomerClient {
     }
   }
 
-  public update(id: string, parameters: RemoteCustomerParameters): Customer | undefined {
+  public async update(id: string, parameters: RemoteCustomerParameters): Promise<Customer | undefined> {
     const remoteCustomer = this.updateRemote(id, parameters);
     return remoteCustomer ? this.toLocalCustomer(remoteCustomer) : undefined;
   }

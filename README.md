@@ -34,12 +34,12 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
   -  [x] Cashier generation
   -  [x] Assigning customers to lines
   -  [x] Remove customers from the queue
-- [ ] Make service calls async. 
-  -  [ ] Customer
-  -  [ ] Engine
-  -  [ ] Fulfillment
-  -  [ ] Line
-  -  [ ] Queue
+- [x] Make service calls async. 
+  -  [x] Customer
+  -  [x] Engine
+  -  [x] Fulfillment
+  -  [x] Line
+  -  [x] Queue
 - [ ] The manager should make the following decisions using a random selection algorithm:
     - [ ] Nothing
     - [ ] Change a cashier

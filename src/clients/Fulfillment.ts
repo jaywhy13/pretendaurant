@@ -7,7 +7,7 @@ export type FulfillmentParams = Omit<Fulfillment, "id">;
 export class FulfillmentClient {
   private CUSTOMERS_SERVED: RemoteFulfillment[] = [];
 
-  public serveCustomer(params: FulfillmentParams): Fulfillment {
+  public async serveCustomer(params: FulfillmentParams): Promise<Fulfillment> {
     const fulfillment = {
       id: uuidv4(),
       ...params,
@@ -16,7 +16,7 @@ export class FulfillmentClient {
     return this.toLocalFulfillment(fulfillment);
   }
 
-  public list(lineId: string, customerId: string): Fulfillment[] {
+  public async list(lineId: string, customerId: string): Promise<Fulfillment[]> {
     return this.CUSTOMERS_SERVED.filter(
       (fulfillment) => fulfillment.customerId === customerId && fulfillment.lineId === lineId
     ).map((remoteFulfillment) => this.toLocalFulfillment(remoteFulfillment));

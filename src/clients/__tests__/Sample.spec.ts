@@ -14,7 +14,7 @@ describe("test", () => {
 
     jest.advanceTimersByTime(8000);
 
-    expect(callback).toHaveBeenCalledTimes(8);
+    expect(callback).toHaveBeenCalledTimes(2); // not 8
   });
 
 
@@ -36,7 +36,7 @@ describe("test", () => {
   });
 
 
-  it.only('understanding execution order', async () => {
+  it('understanding execution order', async () => {
     const order = [];
 
     order.push('1');

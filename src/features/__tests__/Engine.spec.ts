@@ -6,10 +6,6 @@ import { LineClient } from "../../clients/Line";
 import { QueueClient } from "../../clients/Queue";
 import { advanceClockByTicks } from "../../clients/__tests__/utils";
 
-function flushPromises() {
-  return new Promise(resolve => setImmediate(resolve));
-}
-
 describe("Engine", () => {
   let customerClient: CustomerClient;
   let cashierClient: CashierClient;
@@ -52,7 +48,7 @@ describe("Engine", () => {
 
       await clockClient.start();
 
-      const lines = lineClient.list();
+      const lines = await lineClient.list();
       expect(lines).toHaveLength(4);
     });
 
@@ -72,7 +68,7 @@ describe("Engine", () => {
 
       await clockClient.start();
 
-      const linesWithoutCashiers = lineClient.list({ filters: { cashierId: undefined } });
+      const linesWithoutCashiers = await lineClient.list({ filters: { cashierId: undefined } });
       expect(linesWithoutCashiers).toHaveLength(0);
     });
 
@@ -114,16 +110,16 @@ describe("Engine", () => {
       // This should assign customers to the lines
       await advanceClockByTicks(clockClient, 1);
 
-      const line = lineClient.list()[0];
+      const line = (await lineClient.list())[0];
       const customer = (await customerClient.list())[0];
-      const customersInLine = lineClient.getCustomersInLine(line.id);
+      const customersInLine = await lineClient.getCustomersInLine(line.id);
 
       expect(customersInLine).toHaveLength(1);
       expect(customersInLine[0].customer.id).toEqual(customer.id);
 
     });
 
-    it.only('removes customers from the quueue', async () => {
+    it('removes customers from the quueue', async () => {
 
       options = {
         ...defaultOptions,
@@ -138,7 +134,7 @@ describe("Engine", () => {
       await clockClient.start();
 
       console.log("Assert that the queue is empty")
-      expect(queueClient.list()).toHaveLength(0);
+      expect(await queueClient.list()).toHaveLength(0);
       expect(await customerClient.list()).toHaveLength(0);
 
       // This should assign customers to the lines
@@ -148,7 +144,7 @@ describe("Engine", () => {
 
       console.log("Lets check the queue length now in the test")
 
-      expect(queueClient.list()).toHaveLength(0);
+      expect(await queueClient.list()).toHaveLength(0);
 
     });
 

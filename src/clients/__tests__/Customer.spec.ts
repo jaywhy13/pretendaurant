@@ -8,20 +8,20 @@ describe("Customer client", () => {
   });
 
   describe("create", () => {
-    it("should create an ID for the customer", () => {
-      const customer = customerClient.create({ patience: 10 });
+    it("should create an ID for the customer", async () => {
+      const customer = await customerClient.create({ patience: 10 });
       expect(customer.id).toBeTruthy();
     });
 
-    it("should create the attributes on the customer", () => {
-      const customer = customerClient.create({ patience: 10 });
+    it("should create the attributes on the customer", async () => {
+      const customer = await customerClient.create({ patience: 10 });
       expect(customer.patience).toEqual(10);
     });
   });
 
   describe("get", () => {
     it("should get existing customer", async () => {
-      const customer = customerClient.create({ patience: 10 });
+      const customer = await customerClient.create({ patience: 10 });
       expect(await customerClient.get(customer.id)).toEqual(customer);
     });
 
@@ -32,15 +32,15 @@ describe("Customer client", () => {
 
   describe("list", () => {
     it("should list existing customers", async () => {
-      const customer = customerClient.create({ patience: 10 });
+      const customer = await customerClient.create({ patience: 10 });
       expect(await customerClient.list()).toEqual([customer]);
     });
   });
 
   describe("update", () => {
     it("should update existing customers", async () => {
-      const customer = customerClient.create({ patience: 10 });
-      customerClient.update(customer.id, { patience: 5 });
+      const customer = await customerClient.create({ patience: 10 });
+      await customerClient.update(customer.id, { patience: 5 });
 
       expect((await customerClient.get(customer.id))?.patience).toBe(5);
     });
