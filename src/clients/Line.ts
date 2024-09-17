@@ -118,8 +118,10 @@ export class LineClient {
     );
   }
 
-  public addCustomerToLine(lineId: string, customerId: string): CustomerInLine {
-    const remoteCustomer = this.customerClient.getRemote(customerId);
+  public async addCustomerToLine(lineId: string, customerId: string): Promise<CustomerInLine> {
+    console.log("Fetching remote customer with id", customerId, "and lineId", lineId);
+    const remoteCustomer = await this.customerClient.getRemote(customerId);
+    console.log("Line: Got remote customer", remoteCustomer);
     if (remoteCustomer === undefined) {
       throw new Error(`Customer with id ${customerId} not found`);
     }

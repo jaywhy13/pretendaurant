@@ -20,29 +20,29 @@ describe("Customer client", () => {
   });
 
   describe("get", () => {
-    it("should get existing customer", () => {
+    it("should get existing customer", async () => {
       const customer = customerClient.create({ patience: 10 });
-      expect(customerClient.get(customer.id)).toEqual(customer);
+      expect(await customerClient.get(customer.id)).toEqual(customer);
     });
 
-    it("should return undefined for non-existent customer", () => {
-      expect(customerClient.get("abcdef")).toBeUndefined();
+    it("should return undefined for non-existent customer", async () => {
+      expect(await customerClient.get("abcdef")).toBeUndefined();
     });
   });
 
   describe("list", () => {
-    it("should list existing customers", () => {
+    it("should list existing customers", async () => {
       const customer = customerClient.create({ patience: 10 });
-      expect(customerClient.list()).toEqual([customer]);
+      expect(await customerClient.list()).toEqual([customer]);
     });
   });
 
   describe("update", () => {
-    it("should update existing customers", () => {
+    it("should update existing customers", async () => {
       const customer = customerClient.create({ patience: 10 });
       customerClient.update(customer.id, { patience: 5 });
 
-      expect(customerClient.get(customer.id)?.patience).toBe(5);
+      expect((await customerClient.get(customer.id))?.patience).toBe(5);
     });
   });
 });

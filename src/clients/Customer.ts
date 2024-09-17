@@ -11,19 +11,22 @@ type CustomerParameters = Omit<Partial<Customer>, "id">;
 export class CustomerClient {
   REMOTE_CUSTOMER_DATA: RemoteCustomer[] = [];
 
-  public list(): Customer[] {
+  public async list(): Promise<Customer[]> {
     return this.REMOTE_CUSTOMER_DATA.map((remoteCustomer) => this.toLocalCustomer(remoteCustomer));
   }
 
-  public get(id: string): Customer | undefined {
+  public async get(id: string): Promise<Customer | undefined> {
     const remoteCustomer = this.REMOTE_CUSTOMER_DATA.find((customer) => customer.id === id);
     if (remoteCustomer) {
       return this.toLocalCustomer(remoteCustomer);
     }
   }
 
-  public getRemote(id: string): RemoteCustomer | undefined {
-    return this.REMOTE_CUSTOMER_DATA.find((customer) => customer.id === id);
+  public async getRemote(id: string): Promise<RemoteCustomer | undefined> {
+    console.log("Getting remote customer with id", id, this.REMOTE_CUSTOMER_DATA, this, toString())
+    const result = this.REMOTE_CUSTOMER_DATA.find((customer) => customer.id === id);
+    console.log("Customer.getRemote Got remote customer", result)
+    return result;
   }
 
   public create(params: CustomerParameters): Customer {

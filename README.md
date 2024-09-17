@@ -52,6 +52,10 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
 - [ ] Move clients to a backend service
 - [ ] Implement push layer for publishing changes to the underlying models.
 - [ ] Implement a nice abstraction for using the clock that automatically removes listeners when the at test completion. This should avoid the engine processing another tick due to Jest flushing timers
+- [ ] Look into frontend integrations for better Observability
+
+https://stackoverflow.com/questions/52177631/jest-timer-and-promise-dont-work-well-settimeout-and-async-function
+
 
 ## Lessons
 

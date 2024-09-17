@@ -26,19 +26,19 @@ describe("Line Client", () => {
   });
 
   describe("list", () => {
-    it("orders lines by length ascending", () => {
+    it("orders lines by length ascending", async () => {
       const customer1 = customerClient.create({});
       const customer2 = customerClient.create({});
       const customer3 = customerClient.create({});
 
       const lineWithTwoCustomers = lineClient.create({});
 
-      [customer1.id, customer2.id].forEach((customerId) => {
-        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      [customer1.id, customer2.id].forEach(async (customerId) => {
+        await lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
       });
 
       const lineWithOneCustomer = lineClient.create({});
-      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+      await lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
 
       const lineWithNoCustomers = lineClient.create({});
 
@@ -55,18 +55,18 @@ describe("Line Client", () => {
       ]);
     });
 
-    it("orders lines by length descending", () => {
+    it("orders lines by length descending", async () => {
       const customer1 = customerClient.create({});
       const customer2 = customerClient.create({});
       const customer3 = customerClient.create({});
 
       const lineWithTwoCustomers = lineClient.create({});
-      [customer1.id, customer2.id].forEach((customerId) => {
-        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      [customer1.id, customer2.id].forEach(async (customerId) => {
+        await lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
       });
 
       const lineWithOneCustomer = lineClient.create({});
-      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+      await lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
 
       const lineWithNoCustomers = lineClient.create({});
 
@@ -117,35 +117,35 @@ describe("Line Client", () => {
   });
 
   describe("customers in line", () => {
-    it("add customers to the line", () => {
+    it("add customers to the line", async () => {
       const cashierId = uuidv4();
       const line = lineClient.create({ cashierId });
       const customer = customerClient.create({});
-      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
+      const customerInLine = await lineClient.addCustomerToLine(line.id, customer.id);
 
       expect(customerInLine).toEqual({ lineId: line.id, customer });
     });
 
-    it("add customers to the line object", () => {
+    it("add customers to the line object", async () => {
       const cashierId = uuidv4();
       let line = lineClient.create({ cashierId });
 
       const customer = customerClient.create({});
-      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
+      const customerInLine = await lineClient.addCustomerToLine(line.id, customer.id);
 
       line = lineClient.get(line.id)!;
       expect(line.customersInLine).toEqual([customerInLine]);
     });
 
-    it("removes customers from the line", () => {
+    it("removes customers from the line", async () => {
       const cashierId = uuidv4();
       const line = lineClient.create({ cashierId });
 
       const customer = customerClient.create({});
-      const customerInLine = lineClient.addCustomerToLine(line.id, customer.id);
+      const customerInLine = await lineClient.addCustomerToLine(line.id, customer.id);
 
       const anotherCustomer = customerClient.create({});
-      const anotherCustomerInLine = lineClient.addCustomerToLine(line.id, anotherCustomer.id);
+      const anotherCustomerInLine = await lineClient.addCustomerToLine(line.id, anotherCustomer.id);
 
       lineClient.removeCustomerFromLine(line.id, customer.id);
 
@@ -155,18 +155,18 @@ describe("Line Client", () => {
       expect(customersInLine).toContainEqual(anotherCustomerInLine);
     });
 
-    it("gets emptiest line", () => {
+    it("gets emptiest line", async () => {
       const customer1 = customerClient.create({});
       const customer2 = customerClient.create({});
       const customer3 = customerClient.create({});
 
       const lineWithTwoCustomers = lineClient.create({});
-      [customer1.id, customer2.id].forEach((customerId) => {
-        lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
+      [customer1.id, customer2.id].forEach(async (customerId) => {
+        await lineClient.addCustomerToLine(lineWithTwoCustomers.id, customerId);
       });
 
       const lineWithOneCustomer = lineClient.create({});
-      lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
+      await lineClient.addCustomerToLine(lineWithOneCustomer.id, customer3.id);
 
       const lineWithNoCustomers = lineClient.create({});
 

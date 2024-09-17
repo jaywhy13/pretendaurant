@@ -124,7 +124,12 @@ export class EngineClient {
       const line = lines.length > 0 ? lines[0] : null;
       if (line !== null) {
         console.log(`Assigning customer ${customerId} to line ${line.id}`);
-        this.lineClient.addCustomerToLine(line.id, customerId);
+        await this.lineClient.addCustomerToLine(line.id, customerId);
+        // Everything below here gets added to the microtask queue
+        // So it will run after the rest of the syncrhonous code
+        // in our test
+        // We need a way to immediately run the microtask queue
+        console.log(`Removing customer from the queue`)
         this.queueClient.removeCustomer(customerId);
       }
     }

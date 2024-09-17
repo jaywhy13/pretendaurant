@@ -6,6 +6,10 @@ import { LineClient } from "../../clients/Line";
 import { QueueClient } from "../../clients/Queue";
 import { advanceClockByTicks } from "../../clients/__tests__/utils";
 
+function flushPromises() {
+  return new Promise(resolve => setImmediate(resolve));
+}
+
 describe("Engine", () => {
   let customerClient: CustomerClient;
   let cashierClient: CashierClient;
@@ -83,15 +87,15 @@ describe("Engine", () => {
 
       await clockClient.start();
 
-      expect(customerClient.list()).toHaveLength(0);
+      expect(await customerClient.list()).toHaveLength(0);
 
       advanceClockByTicks(clockClient, 1);
 
-      expect(customerClient.list()).toHaveLength(1);
+      expect(await customerClient.list()).toHaveLength(1);
 
       advanceClockByTicks(clockClient, 1);
 
-      expect(customerClient.list()).toHaveLength(2);
+      expect(await customerClient.list()).toHaveLength(2);
     });
 
     it('assigns customers to the lines', async () => {
@@ -111,7 +115,7 @@ describe("Engine", () => {
       advanceClockByTicks(clockClient, 1);
 
       const line = lineClient.list()[0];
-      const customer = customerClient.list()[0];
+      const customer = (await customerClient.list())[0];
       const customersInLine = lineClient.getCustomersInLine(line.id);
 
       expect(customersInLine).toHaveLength(1);
@@ -133,11 +137,18 @@ describe("Engine", () => {
 
       await clockClient.start();
 
+      console.log("Assert that the queue is empty")
       expect(queueClient.list()).toHaveLength(0);
-      expect(customerClient.list()).toHaveLength(0);
+      expect(await customerClient.list()).toHaveLength(0);
 
       // This should assign customers to the lines
+      console.log("Advance the clock by 1 tick")
       advanceClockByTicks(clockClient, 1);
+      console.log("Clock advanced by 1 tick")
+
+      // await flushPromises();
+
+      console.log("Lets check the queue length now in the test")
 
       expect(queueClient.list()).toHaveLength(0);
 
