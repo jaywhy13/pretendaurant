@@ -35,22 +35,30 @@ I'm doing more detailed documentation on the project itself [here](./docs/develo
   -  [x] Assigning customers to lines
   -  [x] Remove customers from the queue
 - [x] Make service calls async. 
+- [ ] Make a FakeClockClient and move advanceTimer to the FakeClockClient
+- [ ] Add unit tests for the engine
   -  [x] Customer
   -  [x] Engine
   -  [x] Fulfillment
   -  [x] Line
   -  [x] Queue
+- [ ] Complete the engine
+    - [ ] Serve customers
+    - [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
+    - [ ] Customers leave when they're upset based on their patience
+- [ ] Implement scoring mechanism
+    - [ ] The following formula should be used to calculate the customer score:
+        - 100 - percentage of angry customers - percentage of abandoned customers (minimum of zero)
 - [ ] The manager should make the following decisions using a random selection algorithm:
     - [ ] Nothing
     - [ ] Change a cashier
 - [ ] The following formula should be used to calculate the manager score:
     - 100 - percentage of angry customers - percentage of abandoned customers (minimum of zero)
+- [ ] Implement push layer for publishing changes to the underlying models.
 - [ ] The manager is given feedback after 20 units of time.
 - [ ] The score should be displayed prominently.
 - [ ] Implement a smarter decision making algorithm based on a poor man's version of Reinforcement Learning.
-- [ ] Cashiers can serve a _maximum_ of `speed` number of customers per unit time.
 - [ ] Move clients to a backend service
-- [ ] Implement push layer for publishing changes to the underlying models.
 - [ ] Implement a nice abstraction for using the clock that automatically removes listeners when the at test completion. This should avoid the engine processing another tick due to Jest flushing timers
 - [ ] Look into frontend integrations for better Observability
 
