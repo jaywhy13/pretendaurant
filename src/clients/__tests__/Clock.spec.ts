@@ -1,12 +1,13 @@
 import { ClockClient } from "../Clock";
-import { advanceClockByTicks } from "./utils";
+import { FakeClockClient } from "./FakeClockClient";
+
 
 describe("Clock", () => {
-  let clockClient: ClockClient;
+  let clockClient: FakeClockClient;
   const tickRateMs = 1000;
 
   beforeEach(() => {
-    clockClient = new ClockClient(tickRateMs);
+    clockClient = new FakeClockClient(tickRateMs);
   });
 
   describe("start", () => {
@@ -17,7 +18,7 @@ describe("Clock", () => {
       clockClient.addOnTickCallback(callback);
       await clockClient.start();
 
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
 
       expect(callback).toHaveBeenCalled();
     });
@@ -31,10 +32,11 @@ describe("Clock", () => {
       await clockClient.start();
       expect(callback).toHaveBeenCalledTimes(1);
 
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
+
       expect(callback).toHaveBeenCalledTimes(2);
 
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
       expect(callback).toHaveBeenCalledTimes(3);
     });
   });

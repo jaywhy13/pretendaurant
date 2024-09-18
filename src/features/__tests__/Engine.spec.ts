@@ -4,12 +4,12 @@ import { CustomerClient } from "../../clients/Customer";
 import { EngineClient, EngineOptions } from "../../clients/Engine";
 import { LineClient } from "../../clients/Line";
 import { QueueClient } from "../../clients/Queue";
-import { advanceClockByTicks } from "../../clients/__tests__/utils";
+import { FakeClockClient } from "../../clients/__tests__/FakeClockClient";
 
 describe("Engine", () => {
   let customerClient: CustomerClient;
   let cashierClient: CashierClient;
-  let clockClient: ClockClient;
+  let clockClient: FakeClockClient;
   let lineClient: LineClient;
   let options: EngineOptions;
   let engine: EngineClient;
@@ -26,7 +26,7 @@ describe("Engine", () => {
     customerClient = new CustomerClient();
     cashierClient = new CashierClient();
     lineClient = new LineClient(customerClient);
-    clockClient = new ClockClient();
+    clockClient = new FakeClockClient();
     queueClient = new QueueClient();
   });
 
@@ -85,11 +85,11 @@ describe("Engine", () => {
 
       expect(await customerClient.list()).toHaveLength(0);
 
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
 
       expect(await customerClient.list()).toHaveLength(1);
 
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
 
       expect(await customerClient.list()).toHaveLength(2);
     });
@@ -108,7 +108,7 @@ describe("Engine", () => {
       await clockClient.start();
 
       // This should assign customers to the lines
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
 
       const line = (await lineClient.list())[0];
       const customer = (await customerClient.list())[0];
@@ -139,7 +139,7 @@ describe("Engine", () => {
 
       // This should assign customers to the lines
       console.log("Advance the clock by 1 tick")
-      await advanceClockByTicks(clockClient, 1);
+      await clockClient.advanceByTicks(1);
       console.log("Clock advanced by 1 tick")
 
       console.log("Lets check the queue length now in the test")
@@ -147,8 +147,5 @@ describe("Engine", () => {
       expect(await queueClient.list()).toHaveLength(0);
 
     });
-
-
-
   });
 });
