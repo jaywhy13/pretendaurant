@@ -1,6 +1,5 @@
-/*
-* @jest-environment node
-*/import { ClockClient } from "../Clock";
+import { ClockClient } from "../Clock";
+import { setImmediate } from 'timers'
 
 function flushPromises() {
   return new Promise(resolve => setImmediate(resolve));
